@@ -1,25 +1,31 @@
-import { Host } from "../models/host"
-import { Network } from "../models/network"
-import * as manager from "./manager"
+import readline from "readline"
+import { Lab } from "../models/lab"
+import { RunCommand } from "./cmd"
 
-// Run commands based on cli's user input
-export function RunCommand(action: string, type?: string, object?: string, option?: string) {
-    switch (action) {
-        case "create":
-            switch (type) {
-                case "host":
-                    console.log("Adding host:", object)
-                    manager.AddHost(new Host(object || "", "Ubuntu 24.04"))
-                    break
-                case "network":
-                    console.log("Adding network:", object)
-                    manager.AddNetwork(new Network(object || "", "10.10.0.1"))
-                    break
-                default:
-                    return Error(`Unknown action type ${type}`)
-            }
-            break
-        default:
-            return Error(`Unkown command ${action}'`)
+export class VShell {
+    private rl: readline.Interface
+    public lab: Lab
+
+    constructor(lab: Lab) {
+        this.lab = lab
+        this.rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+        prompt: `\x1b[1;92m\x1b[0m󱥸 \x1b[1;92mVLab \x1b[0m󰇘 \x1b[1;32m${lab.name}\x1b[1;92m $ \x1b[0m`
+        })
+    }
+
+    public Start() {
+        this.rl.prompt()
+        this.rl.on('line', (line) => {
+            const input = line.trim()
+            let err = RunCommand(input) 
+            if (err) console.log("\x1b[1;90m" + "Error: " + err + "\x1b[0m")
+            this.rl.prompt()
+        })
+        this.rl.on('close', () => {
+            console.log("Exit")
+            process.exit(0)
+        })
     }
 }
