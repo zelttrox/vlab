@@ -5,7 +5,6 @@ import * as data from "./data";
 // Add a new host
 export function AddHost(host: Host) {
     data.hosts.push(host)
-    console.log(data.hosts)
 }
 
 // Add a newt network
