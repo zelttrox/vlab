@@ -1,4 +1,4 @@
-import * as cli from "./src/core/vshell"
+import * as cli from "./src/models/vshell"
 import { Lab } from "./src/models/lab"
 
 // Init VShell

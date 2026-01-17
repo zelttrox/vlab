@@ -1,6 +1,6 @@
 import readline from "readline"
-import { Lab } from "../models/lab"
-import { RunCommand } from "./cmd"
+import { Lab } from "./lab"
+import { RunCommand } from "../core/cmd"
 
 export class VShell {
     private rl: readline.Interface

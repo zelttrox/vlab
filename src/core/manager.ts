@@ -4,7 +4,7 @@ import { Network } from "../models/network";
 
 // LABS
 export var labs: Lab[] = []
-export var current_lab: Lab
+export var currentLab: Lab
 // Add new lab
 export function AddLab(lab: Lab) {
     labs.push(lab)
@@ -37,15 +37,5 @@ export function ShowLab(lab: Lab) {
 // Enter an existing lab
 // FIX: Add lab name to vshell prompt
 export function EnterLab(lab: Lab) {
-    current_lab = lab;
-}
-
-// Hosts
-export function AddHost(host: Host) {
-    current_lab.hosts.push(host)
-}
-
-// Networks
-export function AddNetwork(network: Network) {
-    current_lab.networks.push(network)
+    currentLab = lab;
 }

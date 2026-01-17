@@ -12,18 +12,18 @@ import { Network } from "../models/network"
 export function RunCommand(command: string) {
     var expr: string[] = command.split(" ")
     // Level 2 commands (inside a lab)
-    if (manager.current_lab) {
+    if (manager.currentLab) {
         switch (expr[0]) {
         case "create":
             switch (expr[1]) {
             case "host":
                 if (!verify.IsNameValid(expr[2])) return `Invalid container name '${expr[2]}'`
-                manager.AddHost(new Host("983274982173", expr[2], "Ubuntu 24.04", "Down", new Date(), new Date(), [], "10.0.0.1", "", "10.0.0.0", []))
+                manager.currentLab.AddHost(new Host("983274982173", expr[2], "Ubuntu 24.04", "Down", new Date(), new Date(), [], "10.0.0.1", "", "10.0.0.0", []))
                 visuals.DisplayNew(expr[2], expr[1])
                 break
             case "network":
                 if (!verify.IsNameValid(expr[2])) return `Invalid network name '${expr[2]}`
-                manager.AddNetwork(new Network(expr[2], "10.10.2.0"))
+                manager.currentLab.AddNetwork(new Network(expr[2], "10.10.2.0"))
                 visuals.DisplayNew(expr[2], expr[1])
                 break
             default: return `Unknown command '${command}'`
