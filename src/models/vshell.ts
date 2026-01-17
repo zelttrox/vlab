@@ -1,16 +1,17 @@
 import readline from "readline"
-import { Lab } from "./lab"
-import { RunCommand } from "../core/cmd"
+import { HandleCommand } from "../core/cmd"
+import { VLab } from "./vlab"
 
 export class VShell {
     private rl: readline.Interface
-    public lab?: Lab
+    public vlab: VLab
 
-    constructor() {
+    constructor(vlab: VLab) {
+        this.vlab = vlab
         this.rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout,
-        prompt: `\x1b[0m󱥸 \x1b[1;92mVLab 0.1\x1b[0m 󰇘 \x1b[1;32m${this.lab ? (this.lab.name) : ('/')}\x1b[1;92m $ \x1b[0m`
+        prompt: `\x1b[0m󱥸 \x1b[1;92mVLab 0.1\x1b[0m 󰇘 \x1b[1;32m${this.vlab.GetCurrentLab() ? (this.vlab.GetCurrentLab()?.name) : ('/')}\x1b[1;92m $ \x1b[0m`
         })
     }
 
@@ -18,7 +19,7 @@ export class VShell {
         this.rl.prompt()
         this.rl.on('line', (line) => {
             const input = line.trim()
-            let err = RunCommand(input) 
+            let err = HandleCommand(input) 
             if (err) console.log("\x1b[1;90m" + "Error: " + err + "\x1b[0m")
             this.rl.prompt()
         })

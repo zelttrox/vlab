@@ -1,9 +1,11 @@
 import * as cli from "./src/models/vshell"
 import { Lab } from "./src/models/lab"
+import { VLab } from "./src/models/vlab"
 
-// Init VShell
-const vshell = new cli.VShell()
+// Init VShell & VLab
+export var vlab = new VLab()
+const vshell = new cli.VShell(vlab)
 
 // Start VShell
-vshell.lab = new Lab("testlab")
+vlab.AddLab(new Lab("Testlab"))
 vshell.Start()
