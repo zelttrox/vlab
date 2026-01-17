@@ -4,14 +4,13 @@ import { RunCommand } from "./cmd"
 
 export class VShell {
     private rl: readline.Interface
-    public lab: Lab
+    public lab?: Lab
 
-    constructor(lab: Lab) {
-        this.lab = lab
+    constructor() {
         this.rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout,
-        prompt: `\x1b[1;92m\x1b[0m󱥸 \x1b[1;92mVLab \x1b[0m󰇘 \x1b[1;32m${lab.name}\x1b[1;92m $ \x1b[0m`
+        prompt: `\x1b[0m󱥸 \x1b[1;92mVLab 0.1\x1b[0m 󰇘 \x1b[1;32m${this.lab ? (this.lab.name) : ('/')}\x1b[1;92m $ \x1b[0m`
         })
     }
 
@@ -24,7 +23,7 @@ export class VShell {
             this.rl.prompt()
         })
         this.rl.on('close', () => {
-            console.log("Exit")
+            console.log("exit")
             process.exit(0)
         })
     }
