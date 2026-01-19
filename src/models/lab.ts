@@ -34,6 +34,12 @@ export class Lab {
     return result.name == name ? result : new Host("")
   }
 
+  public FindNetworkByName(name: string) {
+    let result: Network = new Network("")
+    this.networks.forEach(network => {if (network.name == name) result = network})
+    return result.name == name ? result : new Network("")
+  }
+
   public ShowHosts(): Host[] {
     return this.hosts
   }

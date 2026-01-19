@@ -4,6 +4,7 @@ import { Host } from "../models/host"
 import { Network } from "../models/network"
 import { VShell } from "../models/vshell"
 // Utils
+import * as docker from "../docker/create"
 import * as visuals from "../utils/visuals"
 import * as verify from "../utils/verify"
 // VLab
@@ -31,6 +32,7 @@ export async function HandleCommand(command: string, vshell: VShell) {
                 const host = await DefineHost(vshell, new Host(expr[2]))
                 vlab.GetCurrentLab()?.AddHost(host)
                 visuals.DisplayNew(expr[2], expr[1])
+                docker.CreateContainer(host)
                 return
             // CREATE NETWORK
             case "network":
@@ -56,10 +58,30 @@ export async function HandleCommand(command: string, vshell: VShell) {
         break
         case "check":
             switch (expr[1]) {
-                case "host":
+            case "host":
                 console.log(vlab.GetCurrentLab()?.FindHostByName(expr[2]).CheckHost())
-
-                default: return `Invalid command '${command}'`
+                return
+            default: return `Invalid command '${command}'`
+            }
+        case "delete":
+            switch (expr[1]) {
+            // DELETE HOST
+            case "host":
+                const host = vlab.GetCurrentLab()?.FindHostByName(expr[2])
+                if (host) {
+                    vlab.GetCurrentLab()?.DeleteHost(host)
+                    visuals.DisplayDeleted(expr[2], expr[1])
+                }
+                break
+            // DELETE NETWORK
+            case "network":
+                const network = vlab.GetCurrentLab()?.FindNetworkByName(expr[2])
+                if (network) {
+                    vlab.GetCurrentLab()?.DeleteNetwork(network)
+                    visuals.DisplayDeleted(expr[2], expr[1])
+                }
+                break
+            default: return `Invalid command '${command}'`    
             }
         default: return `Unknown command '${command}'`
         }

@@ -5,6 +5,7 @@ import { VShell } from "../models/vshell";
 // Interactive prompting for host creation
 export async function DefineHost(vshell: VShell, host: Host): Promise<Host> {
     host.image = await vshell?.Ask("Host Image: ")
+    host.shell = await vshell?.Ask("Host shell: ")
     return new Promise((resolve) => {resolve(host)})
 }
 
