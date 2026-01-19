@@ -93,10 +93,21 @@ export async function HandleCommand(command: string, vshell: VShell) {
             if (!verify.IsNameValid(expr[2])) return `Invalid lab name ${expr[2]}`
             vlab.AddLab(new Lab(expr[2]))
             visuals.DisplayNew(expr[2], expr[1])
+            if (expr[3] == "&") {
+                vlab.EnterLab(vlab.FindLabByName(expr[2]))
+                vshell?.RefreshPrompt()
+            }
         }
         // DELETE LAB
+        // FIX * FEATURE (DELETE ALL)
         else if (expr[0] == "delete" && expr[1] == "lab" && expr[2] != "") {
-            if (vlab.FindLabByName(expr[2]).name == "") return `Lab ${expr[2]} does not exist`
+            if (expr[2] == "*") {
+                vlab.labs.forEach(lab => {
+                    vlab.DeleteLab(lab)
+                    visuals.DisplayDeleted(expr[2], expr[1])
+                })
+            }
+            else if (vlab.FindLabByName(expr[2]).name == "") return `Lab ${expr[2]} does not exist`
             vlab.DeleteLab(vlab.FindLabByName(expr[2]))
             visuals.DisplayDeleted(expr[2], expr[1])
         }
