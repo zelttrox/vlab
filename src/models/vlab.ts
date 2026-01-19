@@ -1,7 +1,7 @@
 import { Lab } from "./lab";
 
 export class VLab {
-    private labs: Lab[]
+    public labs: Lab[]
     private currentLab: Lab | null = null
 
     constructor() {
@@ -30,7 +30,7 @@ export class VLab {
         if (!this.currentLab) return
         if (this.currentLab.hosts = []) console.log("   none")
             this.currentLab.hosts.forEach(host => {
-                console.log(`    - ${host.id}:${host.name} (${host.image})`)
+                console.log(`    - ${host.name} (${host.image})`)
             })
             console.log("   << Networks >>")
         if (this.currentLab.networks = []) console.log("   none")
@@ -39,12 +39,15 @@ export class VLab {
         })
     }
 
-    // FIX: Add lab name to vshell prompt
     public EnterLab(lab: Lab) {
         this.currentLab = lab
     }
 
     public GetCurrentLab(): Lab | null {
         return this.currentLab
+    }
+
+    public SetCurrentLab(lab: Lab | null) {
+        this.currentLab = lab
     }
 }

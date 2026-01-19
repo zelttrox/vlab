@@ -1,44 +1,26 @@
-import { Network } from "./network"
+import { Network } from "./network";
+
+export type HostStatus = 'defined' | 'created' | 'running' | 'stopped';
 
 export class Host {
-  // Host identity
-  id: string
-  name: string
-  image: string
-  // Host state
-  status: string
-  createdAt: Date
-  startedAt: Date
-  // Host network settings
-  networks: Network[]
-  ipAddress: string
-  macAddress: string
-  gateway: string
-  ports: string[]
+  // Config
+  public name: string;
+  public image?: string;
+  public networks: Network[];
+  public ports: number[];
+  // Docker
+  public containerId?: string;
+  public status: HostStatus;
+  public createdAt?: Date;
+  public startedAt?: Date;
 
-  constructor(
-    id: string,
-    name: string,
-    image: string,
-    status: string,
-    createdAt: Date,
-    startedAt: Date,
-    networks: Network[],
-    ipAddress: string,
-    macAddress: string,
-    gateway: string,
-    ports: string[]
-  ) {
-    this.id = id
-    this.name = name
-    this.image = image
-    this.status = status
-    this.createdAt = createdAt
-    this.startedAt = startedAt
-    this.networks = networks
-    this.ipAddress = ipAddress
-    this.macAddress = macAddress
-    this.gateway = gateway
-    this.ports = ports
+  constructor(name: string) {
+    this.name = name;
+    this.networks = [];
+    this.ports = [];
+    this.status = 'defined';
   }
+
+  // TODO: ADD REAL DISPLAY FUNC
+  public CheckHost() {return this}
 }

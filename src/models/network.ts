@@ -1,11 +1,14 @@
 export class Network {
   name: string
   ip: string
-  networks: string[]
+  subnets: Network[]
 
-  constructor(name: string, ip: string) {
+  constructor(name: string) {
     this.name = name
-    this.ip = ip
-    this.networks = []
+    this.ip = ""
+    this.subnets = []
   }
+
+  // TODO: ADD REAL DISPLAY FUNC
+  public CheckNetwork() {return this}
 }
