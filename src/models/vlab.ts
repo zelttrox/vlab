@@ -24,7 +24,7 @@ export class VLab {
     }
 
     // TODO: Make the display prettier + with colors
-    public ShowLab(lab: Lab) {
+    public CheckLab(lab: Lab) {
         console.log(`   [Lab: ${lab.name}]`)
         console.log("   << Hosts >>")
         if (!this.currentLab) return
@@ -37,6 +37,11 @@ export class VLab {
             this.currentLab.networks.forEach(network => {
                 console.log(`    - ${network.name}`)
         })
+    }
+
+    // TODO: Make the display prettier + with colors
+    public ShowLabs() {
+        console.log(this.labs)
     }
 
     public EnterLab(lab: Lab) {

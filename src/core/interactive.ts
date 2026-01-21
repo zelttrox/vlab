@@ -11,6 +11,9 @@ export async function DefineHost(vshell: VShell, host: Host): Promise<Host> {
 
 // Interactive prompting for network creation
 export async function DefineNetwork(vshell: VShell, network: Network): Promise<Network> {
+    network.driver = await vshell?.Ask("Driver (host|bridge|overlay|macvlan): ")
     network.ip = await vshell?.Ask("Public IP: ")
+    network.ip = await vshell?.Ask("Subnet: ")
+    network.ip = await vshell?.Ask("Gateway: ")
     return new Promise((resolve) => {resolve(network)})
 }

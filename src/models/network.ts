@@ -1,12 +1,14 @@
+import * as Docker from "dockerode"
 export class Network {
   name: string
-  ip: string
-  subnets: Network[]
+  driver?: string
+  ip?: string
+  subnet?: string
+  gateway?: string
+  docker?: Docker.Network
 
   constructor(name: string) {
     this.name = name
-    this.ip = ""
-    this.subnets = []
   }
 
   // TODO: ADD REAL DISPLAY FUNC

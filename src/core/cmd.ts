@@ -31,14 +31,15 @@ export async function HandleCommand(command: string, vshell: VShell) {
                 if (!verify.IsNameValid(expr[2])) return `Invalid container name '${expr[2]}'`
                 const host = await DefineHost(vshell, new Host(expr[2]))
                 vlab.GetCurrentLab()?.AddHost(host)
-                visuals.DisplayNew(expr[2], expr[1])
                 host.docker = await docker.CreateContainer(host)
+                visuals.DisplayNew(expr[2], expr[1])
                 return
             // CREATE NETWORK
             case "network":
                 if (!verify.IsNameValid(expr[2])) return `Invalid network name '${expr[2]}`
                 const network = await DefineNetwork(vshell, new Network(expr[2]))
                 vlab.GetCurrentLab()?.AddNetwork(network)
+                network.docker = await docker.CreateNetwork(network)
                 visuals.DisplayNew(expr[2], expr[1])
                 return
             default: return `Unknown command '${command}'`
@@ -102,6 +103,7 @@ export async function HandleCommand(command: string, vshell: VShell) {
             visuals.DisplayNew(expr[2], expr[1])
             if (expr[3] == "&") {
                 docker.ClearContainers()
+                docker.ClearNetworks()
                 vlab.EnterLab(vlab.FindLabByName(expr[2]))
                 vshell?.RefreshPrompt()
             }
@@ -120,9 +122,13 @@ export async function HandleCommand(command: string, vshell: VShell) {
             visuals.DisplayDeleted(expr[2], expr[1])
         }
         // SHOW LABS
-        else if (expr[0] == "show" && expr[1] == "lab" && expr[2] != "") {
+        else if (expr[0] == "show" && expr[1] == "labs") {
+            vlab.ShowLabs()
+        }
+        // CHECK LAB
+        else if (expr[0] == "check" && expr[1] == "lab" && expr[2] != "") {
             if (vlab.FindLabByName(expr[2]).name == "") return `Lab ${expr[2]} does not exist`
-            vlab.ShowLab(vlab.FindLabByName(expr[2]))
+            vlab.CheckLab(vlab.FindLabByName(expr[2]))
         }
         // ENTER LAB
         else if (expr[0] == "enter" && expr[1] == "lab" && expr[2] != "") {

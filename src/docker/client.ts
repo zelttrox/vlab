@@ -1,5 +1,7 @@
 import Docker, { Container } from "dockerode"
 import { Host } from "../models/host"
+import { Network } from "../models/network"
+import { terminalWidth } from "yargs"
 
 const docker = new Docker()
 
@@ -33,7 +35,39 @@ export function ClearContainers() {
     containers.forEach(cont => {
         const container = docker.getContainer(cont.Id)
         container.stop()
-        container.remove({ force: true })
+        container.remove({force: true})
         })
     })
+}
+
+// Remove all networks
+export function ClearNetworks() {
+    const preDefined = ['bridge', 'host', 'none']
+    docker.listNetworks().then(networks => {
+        networks.forEach(netw => {
+            if (!preDefined.includes(netw.Name)) {
+                const network = docker.getNetwork(netw.Id)
+                network.remove({force: true})
+            }
+        })
+    })
+}
+
+// Create network
+export function CreateNetwork(network: Network) {
+    const netw = docker.createNetwork({
+        Name: network.name,
+        Driver: network.driver,
+        IPAM: {
+            Config: [{ 
+                Subnet: network.subnet,
+                Gateway: network.gateway
+            }],
+        }
+    })
+    return netw
+}
+
+// Attach network to host
+export function AttachNetwork(network: Network, host: Host) {
 }
