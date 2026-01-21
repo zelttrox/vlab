@@ -4,7 +4,7 @@ import { Host } from "../models/host"
 import { Network } from "../models/network"
 import { VShell } from "../models/vshell"
 // Utils
-import * as docker from "../docker/create"
+import * as docker from "../docker/client"
 import * as visuals from "../utils/visuals"
 import * as verify from "../utils/verify"
 // VLab
@@ -32,7 +32,7 @@ export async function HandleCommand(command: string, vshell: VShell) {
                 const host = await DefineHost(vshell, new Host(expr[2]))
                 vlab.GetCurrentLab()?.AddHost(host)
                 visuals.DisplayNew(expr[2], expr[1])
-                docker.CreateContainer(host)
+                host.docker = await docker.CreateContainer(host)
                 return
             // CREATE NETWORK
             case "network":
@@ -81,8 +81,15 @@ export async function HandleCommand(command: string, vshell: VShell) {
                     visuals.DisplayDeleted(expr[2], expr[1])
                 }
                 break
-            default: return `Invalid command '${command}'`    
+            default: return `Invalid command '${command}'`
             }
+        case "start":
+            const host = vlab.GetCurrentLab()?.FindHostByName(expr[1])
+            if (host?.docker) {
+                docker.StartContainer(host.docker)
+                console.log(`${host.name} is up!`)
+            }
+            break
         default: return `Unknown command '${command}'`
         }
     }
@@ -94,6 +101,7 @@ export async function HandleCommand(command: string, vshell: VShell) {
             vlab.AddLab(new Lab(expr[2]))
             visuals.DisplayNew(expr[2], expr[1])
             if (expr[3] == "&") {
+                docker.ClearContainers()
                 vlab.EnterLab(vlab.FindLabByName(expr[2]))
                 vshell?.RefreshPrompt()
             }
@@ -119,6 +127,7 @@ export async function HandleCommand(command: string, vshell: VShell) {
         // ENTER LAB
         else if (expr[0] == "enter" && expr[1] == "lab" && expr[2] != "") {
             if (vlab.FindLabByName(expr[2]).name == "") return `Lab ${expr[2]} does not exist`
+            docker.ClearContainers()
             vlab.EnterLab(vlab.FindLabByName(expr[2]))
             vshell?.RefreshPrompt()
         }

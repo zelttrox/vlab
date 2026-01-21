@@ -1,3 +1,4 @@
+import Docker, { Container } from "dockerode"
 import { Network } from "./network"
 
 export type HostStatus = 'defined' | 'created' | 'running' | 'stopped'
@@ -9,11 +10,7 @@ export class Host {
   public shell: string
   public networks: Network[]
   public ports: number[]
-  // Docker
-  public containerId?: string
-  public status: HostStatus
-  public createdAt?: Date
-  public startedAt?: Date
+  public docker?: Docker.Container
 
   constructor(name: string, image: string ='ubuntu', shell: string = '/bin/bash') {
     this.name = name
@@ -21,7 +18,6 @@ export class Host {
     this.shell = shell
     this.networks = []
     this.ports = []
-    this.status = 'defined'
   }
 
   // TODO: ADD REAL DISPLAY FUNC
