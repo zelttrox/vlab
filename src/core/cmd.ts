@@ -8,11 +8,12 @@ import * as docker from "../docker/client"
 import * as visuals from "../utils/visuals"
 import * as verify from "../utils/verify"
 // VLab
-import { vlab } from "../../vlab"
+import { vlab } from "../../main"
 import { DefineHost, DefineNetwork } from "./interactive"
 
 // Determinate command based on vshell user input
 export async function HandleCommand(command: string, vshell: VShell) {
+    if (command == "") return
     var expr: string[] = command.split(" ")
     // Level 2 commands (inside a lab)
     if (expr[0] == "mylab") console.log(vlab.GetCurrentLab()) 
@@ -85,11 +86,16 @@ export async function HandleCommand(command: string, vshell: VShell) {
             default: return `Invalid command '${command}'`
             }
         case "start":
-            const host = vlab.GetCurrentLab()?.FindHostByName(expr[1])
-            if (host?.docker) {
-                docker.StartContainer(host.docker)
-                console.log(`${host.name} is up!`)
+            const startHost = vlab.GetCurrentLab()?.FindHostByName(expr[1])
+            if (startHost?.docker) {
+                docker.StartContainer(startHost.docker)
+                console.log(`${startHost.name} is up!`)
             }
+            break
+        case "attach":
+            const attachHost = vlab.GetCurrentLab()?.FindHostByName(expr[1])
+            const network = vlab.GetCurrentLab()?.FindNetworkByName(expr[2])
+            if (network && attachHost) docker.AttachNetwork(network, attachHost)
             break
         default: return `Unknown command '${command}'`
         }

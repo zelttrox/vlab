@@ -36,6 +36,7 @@ export function ClearContainers() {
         const container = docker.getContainer(cont.Id)
         container.stop()
         container.remove({force: true})
+        console.log("deleted", container.id)
         })
     })
 }
@@ -48,6 +49,7 @@ export function ClearNetworks() {
             if (!preDefined.includes(netw.Name)) {
                 const network = docker.getNetwork(netw.Id)
                 network.remove({force: true})
+                console.log("deleted", netw.Name)
             }
         })
     })
@@ -69,5 +71,13 @@ export function CreateNetwork(network: Network) {
 }
 
 // Attach network to host
-export function AttachNetwork(network: Network, host: Host) {
+export async function AttachNetwork(network: Network, host: Host) {
+    await network.docker?.connect({
+        Container: host.name,
+        EndpointConfig: {
+            IPAMConfig: {
+                IPv4Address: network.ip
+            }
+        }
+    })
 }
