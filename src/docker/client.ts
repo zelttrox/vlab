@@ -1,7 +1,6 @@
 import Docker, { Container } from "dockerode"
 import { Host } from "../models/host"
 import { Network } from "../models/network"
-import { terminalWidth } from "yargs"
 
 const docker = new Docker()
 
@@ -30,29 +29,33 @@ export function StartContainer(container: Docker.Container) {
 }
 
 // Remove all containers
-export function ClearContainers() {
-    docker.listContainers().then(containers => {
-    containers.forEach(cont => {
-        const container = docker.getContainer(cont.Id)
-        container.stop()
-        container.remove({force: true})
-        console.log("deleted", container.id)
-        })
-    })
+export async function ClearContainers() {
+    try {
+        const containers = await docker.listContainers({ all: true })
+        for (const cont of containers) {
+            const container = docker.getContainer(cont.Id)
+            await container.stop().catch(() => {})
+            await container.remove({force: true})
+        }
+    } catch (err) {
+        console.log("Error clearing containers:", err)
+    }
 }
 
 // Remove all networks
-export function ClearNetworks() {
+export async function ClearNetworks() {
     const preDefined = ['bridge', 'host', 'none']
-    docker.listNetworks().then(networks => {
-        networks.forEach(netw => {
+    try {
+        const networks = await docker.listNetworks()
+        for (const netw of networks) {
             if (!preDefined.includes(netw.Name)) {
                 const network = docker.getNetwork(netw.Id)
-                network.remove({force: true})
-                console.log("deleted", netw.Name)
+                await network.remove({force: true})
             }
-        })
-    })
+        }
+    } catch (err) {
+        console.log("Error clearing networks:", err)
+    }
 }
 
 // Create network

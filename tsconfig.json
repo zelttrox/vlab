@@ -15,7 +15,7 @@
     "sourceMap": true
   },
   "include": [
-    "main.ts",
+    "vlab.ts",
     "src/**/*.ts"
   ],
   "exclude": [

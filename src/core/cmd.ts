@@ -8,25 +8,29 @@ import * as docker from "../docker/client"
 import * as visuals from "../utils/visuals"
 import * as verify from "../utils/verify"
 // VLab
-import { vlab } from "../../main"
+import { vlab } from "../../vlab"
 import { DefineHost, DefineNetwork } from "./interactive"
 
 // Determinate command based on vshell user input
 export async function HandleCommand(command: string, vshell: VShell) {
+
     if (command == "") return
     var expr: string[] = command.split(" ")
     // Level 2 commands (inside a lab)
     if (expr[0] == "mylab") console.log(vlab.GetCurrentLab()) 
     if (vlab.GetCurrentLab()) {
+
         // GO BACK TO /
         if (expr[0] == "goback" || expr[0] == "/" || (expr[0] == "go" && expr[1] == "back")) {
             vlab.SetCurrentLab(null)
             vshell?.RefreshPrompt()
             return
         }
+
         switch (expr[0]) {
         case "create":
             switch (expr[1]) {
+
             // CREATE HOST
             case "host":
                 if (!verify.IsNameValid(expr[2])) return `Invalid container name '${expr[2]}'`
@@ -35,6 +39,7 @@ export async function HandleCommand(command: string, vshell: VShell) {
                 host.docker = await docker.CreateContainer(host)
                 visuals.DisplayNew(expr[2], expr[1])
                 return
+
             // CREATE NETWORK
             case "network":
                 if (!verify.IsNameValid(expr[2])) return `Invalid network name '${expr[2]}`
@@ -47,10 +52,12 @@ export async function HandleCommand(command: string, vshell: VShell) {
         }
         case "show":
             switch (expr[1]) {
+
             // SHOW HOSTS
             case "hosts":
                 console.log(vlab.GetCurrentLab()?.ShowHosts())
                 break
+
             // SHOW NETWORKS
             case "networks":
                 console.log(vlab.GetCurrentLab()?.ShowNetworks())
@@ -67,6 +74,7 @@ export async function HandleCommand(command: string, vshell: VShell) {
             }
         case "delete":
             switch (expr[1]) {
+
             // DELETE HOST
             case "host":
                 const host = vlab.GetCurrentLab()?.FindHostByName(expr[2])
@@ -75,6 +83,7 @@ export async function HandleCommand(command: string, vshell: VShell) {
                     visuals.DisplayDeleted(expr[2], expr[1])
                 }
                 break
+
             // DELETE NETWORK
             case "network":
                 const network = vlab.GetCurrentLab()?.FindNetworkByName(expr[2])
@@ -85,6 +94,8 @@ export async function HandleCommand(command: string, vshell: VShell) {
                 break
             default: return `Invalid command '${command}'`
             }
+
+        // START HOST
         case "start":
             const startHost = vlab.GetCurrentLab()?.FindHostByName(expr[1])
             if (startHost?.docker) {
@@ -92,6 +103,8 @@ export async function HandleCommand(command: string, vshell: VShell) {
                 console.log(`${startHost.name} is up!`)
             }
             break
+
+        // ATTACH NETWORK
         case "attach":
             const attachHost = vlab.GetCurrentLab()?.FindHostByName(expr[1])
             const network = vlab.GetCurrentLab()?.FindNetworkByName(expr[2])
@@ -102,18 +115,20 @@ export async function HandleCommand(command: string, vshell: VShell) {
     }
     // Level 1 commands (inside vshell only)
     else {
+
         // CREATE LAB
         if (expr[0] == "create" && expr[1] == "lab" && expr[2] != "") {
             if (!verify.IsNameValid(expr[2])) return `Invalid lab name ${expr[2]}`
             vlab.AddLab(new Lab(expr[2]))
             visuals.DisplayNew(expr[2], expr[1])
             if (expr[3] == "&") {
-                docker.ClearContainers()
-                docker.ClearNetworks()
+                await docker.ClearContainers()
+                await docker.ClearNetworks()
                 vlab.EnterLab(vlab.FindLabByName(expr[2]))
                 vshell?.RefreshPrompt()
             }
         }
+
         // DELETE LAB
         // FIX * FEATURE (DELETE ALL)
         else if (expr[0] == "delete" && expr[1] == "lab" && expr[2] != "") {
@@ -127,19 +142,23 @@ export async function HandleCommand(command: string, vshell: VShell) {
             vlab.DeleteLab(vlab.FindLabByName(expr[2]))
             visuals.DisplayDeleted(expr[2], expr[1])
         }
+
         // SHOW LABS
         else if (expr[0] == "show" && expr[1] == "labs") {
             vlab.ShowLabs()
         }
+
         // CHECK LAB
         else if (expr[0] == "check" && expr[1] == "lab" && expr[2] != "") {
             if (vlab.FindLabByName(expr[2]).name == "") return `Lab ${expr[2]} does not exist`
             vlab.CheckLab(vlab.FindLabByName(expr[2]))
         }
+        
         // ENTER LAB
         else if (expr[0] == "enter" && expr[1] == "lab" && expr[2] != "") {
             if (vlab.FindLabByName(expr[2]).name == "") return `Lab ${expr[2]} does not exist`
-            docker.ClearContainers()
+            await docker.ClearContainers()
+            await docker.ClearNetworks()
             vlab.EnterLab(vlab.FindLabByName(expr[2]))
             vshell?.RefreshPrompt()
         }
