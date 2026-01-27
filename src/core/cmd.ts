@@ -105,10 +105,10 @@ export async function HandleCommand(command: string, vshell: VShell) {
             break
 
         // ATTACH NETWORK
-        case "attach":
+        case "connect":
             const attachHost = vlab.GetCurrentLab()?.FindHostByName(expr[1])
             const network = vlab.GetCurrentLab()?.FindNetworkByName(expr[2])
-            if (network && attachHost) docker.AttachNetwork(network, attachHost)
+            if (network && attachHost) docker.ConnectNetwork(network, attachHost)
             break
         default: return `Unknown command '${command}'`
         }

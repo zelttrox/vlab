@@ -2,7 +2,7 @@ import * as Docker from "dockerode"
 export class Network {
   name: string
   driver?: string
-  ip?: string
+  ipRange?: string
   subnet?: string
   gateway?: string
   docker?: Docker.Network

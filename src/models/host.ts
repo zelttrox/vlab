@@ -1,25 +1,33 @@
-import Docker, { Container } from "dockerode"
-import { Network } from "./network"
+import Docker, { Container } from "dockerode";
+import { Network } from "./network";
 
-export type HostStatus = 'defined' | 'created' | 'running' | 'stopped'
+export type HostStatus = "defined" | "created" | "running" | "stopped";
 
 export class Host {
-  // Config
-  public name: string
-  public image: string
-  public shell: string
-  public networks: Network[]
-  public ports: number[]
-  public docker?: Docker.Container
+   // Config
+   public name: string;
+   public image: string;
+   public shell: string;
+   public networks: Network[];
+   public ports: number[];
+   public ipv4?: string;
 
-  constructor(name: string, image: string ='ubuntu', shell: string = '/bin/bash') {
-    this.name = name
-    this.image = image
-    this.shell = shell
-    this.networks = []
-    this.ports = []
-  }
+   public docker?: Docker.Container;
 
-  // TODO: ADD REAL DISPLAY FUNC
-  public CheckHost() {return this}
+   constructor(
+      name: string,
+      image: string = "ubuntu",
+      shell: string = "/bin/bash",
+   ) {
+      this.name = name;
+      this.image = image;
+      this.shell = shell;
+      this.networks = [];
+      this.ports = [];
+   }
+
+   // TODO: ADD REAL DISPLAY FUNC
+   public CheckHost() {
+      return this;
+   }
 }
