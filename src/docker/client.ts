@@ -28,6 +28,18 @@ export function StartContainer(container: Docker.Container) {
    container.start();
 }
 
+// Exec docker container
+export async function ExecContainer(container: Docker.Container) {
+   console.log("executing", container.id)
+   const exec = await container.exec({
+      Cmd: ["/bin/bash"],
+      AttachStdin: true,
+      AttachStdout: true,
+      AttachStderr: true,
+      Tty: true
+   });
+}
+
 // Remove all containers
 export async function ClearContainers() {
    try {
