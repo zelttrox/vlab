@@ -4,7 +4,7 @@ import { Host } from "../models/host";
 import { Network } from "../models/network";
 import { VShell } from "../models/vshell";
 // Utils
-import * as docker from "../docker/container";
+import * as docker from "../docker/client";
 import * as visuals from "../utils/visuals";
 import * as verify from "../utils/verify";
 // VLab
