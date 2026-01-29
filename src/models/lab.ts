@@ -40,8 +40,10 @@ export class Lab {
     return result.name == name ? result : new Network("")
   }
 
-  public ShowHosts(): Host[] {
-    return this.hosts
+  public ShowHosts() {
+      this.hosts.forEach(host => {
+          console.log(`\x1b[0m \x1b[1m${host.name} \x1b[0m(${host.docker?.id})`);
+      })
   }
 
   public ShowNetworks(): Network[] {

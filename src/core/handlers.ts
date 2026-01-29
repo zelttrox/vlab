@@ -27,6 +27,7 @@ export async function CreateHost(hostname: string) {
     vlab.GetCurrentLab()?.AddHost(host);
     host.docker = await docker.CreateContainer(host);
     visuals.DisplayNew(hostname, "host");
+    vshell.RefreshPrompt()
 }
 
 // DELETE host using host name
@@ -53,27 +54,31 @@ export function StartHost(hostname: string) {
     const host = vlab.GetCurrentLab()?.FindHostByName(hostname);
     if (host?.docker) {
         docker.StartContainer(host.docker);
+        host.status = "up";
         console.log(`${hostname} is up!`);
     }
 }
 
 // SHELL into host using host name
-// shell <hostname>
+// shell host <hostname>
 export function ShellHost(hostname: string) {
     const host = vlab.GetCurrentLab()?.FindHostByName(hostname);
-    if (host?.name) vshell.ShellIn(host?.name)
+    if (!host) console.log(`Host ${hostname} does not exist`)
+    else if (host?.status == "down") console.log(`Host ${hostname} is down`)
+    else if (host?.name) vshell.ShellIn(host?.name)
+    else console.log(`Host ${hostname} does not exist`)
 }
 
 // SHOW all hosts in current lab
 // show hosts
 export function ShowHosts() {
-    console.log(vlab.GetCurrentLab()?.ShowHosts());
+    vlab.GetCurrentLab()?.ShowHosts();
 }
 
 // CHECK host using host name
 // check host <hostname>
 export function CheckHost(hostname: string) {
-    console.log(vlab.GetCurrentLab()?.FindHostByName(hostname).CheckHost());
+    vlab.GetCurrentLab()?.FindHostByName(hostname).CheckHost();
 }
 
 // ##################
@@ -155,7 +160,7 @@ export function CheckLab(labname: string) {
 }
 
 // SHELL into lab using lab name
-// shell <labname>
+// shell lab <labname>
 export async function ShellLab(labname: string) {
     if (vlab.FindLabByName(labname).name == "") return `Lab ${labname} does not exist`;
     await docker.ClearContainers();

@@ -1,33 +1,34 @@
 import Docker, { Container } from "dockerode";
 import { Network } from "./network";
 
-export type HostStatus = "defined" | "created" | "running" | "stopped";
-
 export class Host {
-   // Config
-   public name: string;
-   public image: string;
-   public shell: string;
-   public networks: Network[];
-   public ports: number[];
-   public ipv4?: string;
+    // Config
+    public name: string;
+    public image: string;
+    public shell: string;
+    public networks: Network[];
+    public ports: number[];
+    public ipv4?: string;
 
-   public docker?: Docker.Container;
+    public docker?: Docker.Container;
+    public status: string
 
-   constructor(
-      name: string,
-      image: string = "ubuntu",
-      shell: string = "/bin/bash",
-   ) {
-      this.name = name;
-      this.image = image;
-      this.shell = shell;
-      this.networks = [];
-      this.ports = [];
-   }
+    constructor(name: string, image: string = "ubuntu", shell: string = "/bin/bash") {
+        this.name = name;
+        this.image = image;
+        this.shell = shell;
+        this.networks = [];
+        this.ports = [];
+        this.status = "down"
+    }
 
-   // TODO: ADD REAL DISPLAY FUNC
-   public CheckHost() {
-      return this;
-   }
+    // TODO: ADD REAL DISPLAY FUNC
+    public CheckHost() {
+        console.log(`\x1b[96mName: \x1b[0m${this.name}`);
+        console.log(`\x1b[36mStatus: \x1b[0m${this.status}`);
+        console.log(`\x1b[36mImage: \x1b[0m${this.image}`);
+        console.log(`\x1b[36mShell: \x1b[0m${this.shell}`);
+        console.log(`\x1b[36mIPv4: \x1b[0m${this.ipv4}`);
+        
+    }
 }

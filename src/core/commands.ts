@@ -40,11 +40,17 @@ export async function HandleCommand(command: string) {
                     default: return `Invalid command '${command}'`;
                 }
             case "connect":
-                handler.ConnectHost(expr[2], expr[3]); break;
+                handler.ConnectHost(expr[2], expr[3]);
+                break;
             case "start":
-                handler.StartHost(expr[2]); break;
+                handler.StartHost(expr[2]);
+                break;
             case "shell":
-                handler.ShellHost(expr[2]); break;
+                handler.ShellHost(expr[2]);
+                break;
+            case "exit":
+                handler.vshell.ShellOut();
+                break;
             default: return `Unknown command '${command}'`;
         }
     }
