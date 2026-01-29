@@ -5,18 +5,23 @@ import { VLab } from "./vlab"
 export class VShell {
     private rl: readline.Interface
     public vlab: VLab
+    public shellMode: boolean
+    public shellTarget?: string
 
     constructor(vlab: VLab) {
         this.vlab = vlab
+        this.shellMode = false
         this.rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout,
         prompt: this.GetPrompt()
         })
+        console.log(this.shellMode, this.shellTarget)
     }
 
     private GetPrompt(): string {
-        return `\x1b[0m󱥸 \x1b[1;92mVLab 0.1\x1b[0m 󰇘 \x1b[1;32m${this.vlab.GetCurrentLab() ? (this.vlab.GetCurrentLab()?.name) : ('/')}\x1b[1;92m $ \x1b[0m`
+        if (this.shellMode == true) return `\x1b[0m󱥸 \x1b[1;92mVLab 0.1\x1b[0m 󰇘 \x1b[1;32m${this.vlab.GetCurrentLab() ? (this.vlab.GetCurrentLab()?.name) : ('/')}\x1b[0m 󰇘 \x1b[1;32m${this.shellTarget}\x1b[1;92m $ \x1b[0m`
+        else return `\x1b[0m󱥸 \x1b[1;92mVLab 0.1\x1b[0m 󰇘 \x1b[1;32m${this.vlab.GetCurrentLab() ? (this.vlab.GetCurrentLab()?.name) : ('/')}\x1b[1;92m $ \x1b[0m`
     }
 
     public RefreshPrompt() {
@@ -39,7 +44,20 @@ export class VShell {
         })
         this.rl.on('close', () => {
             console.log("exit")
-            process.exit(0)
+            if (this.shellMode == true) this.ShellOut()
+            else process.exit(0)
         })
+    }
+    
+    public ShellIn(target: string) {
+        this.shellMode = true
+        this.shellTarget = target
+        this.RefreshPrompt()
+    }
+    
+    public ShellOut() {
+        this.shellMode = false
+        this.shellTarget = undefined
+        this.RefreshPrompt()
     }
 }
