@@ -1,5 +1,5 @@
 import readline from "readline"
-import { HandleCommand } from "../core/cmd"
+import { HandleCommand } from "../core/commands"
 import { VLab } from "./vlab"
 
 export class VShell {

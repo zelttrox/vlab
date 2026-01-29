@@ -3,7 +3,7 @@ import { VLab } from "./src/models/vlab"
 
 // Init VShell & VLab
 export var vlab = new VLab()
-const vshell = new cli.VShell(vlab)
+export const vshell = new cli.VShell(vlab)
 
 // Start VShell
 vshell.Start()
