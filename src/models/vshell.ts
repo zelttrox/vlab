@@ -16,7 +16,6 @@ export class VShell {
         output: process.stdout,
         prompt: this.GetPrompt()
         })
-        console.log(this.shellMode, this.shellTarget)
     }
 
     private GetPrompt(): string {
@@ -38,7 +37,7 @@ export class VShell {
         this.rl.prompt()
         this.rl.on('line', async (line) => {
             const input = line.trim()
-            let err = await HandleCommand(input, this) 
+            let err = await HandleCommand(input) 
             if (err) console.log("\x1b[1;90m" + "Error: " + err + "\x1b[0m")
             this.rl.prompt()
         })

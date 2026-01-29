@@ -1,13 +1,12 @@
 
 // Import handlers and vlab const
 import * as handler from "../core/handlers"
-import { vlab } from "../../vlab";
 
 // Determinate command based on vshell user input
 export async function HandleCommand(command: string) {
     if (command == "") return;
     var expr: string[] = command.split(" ");
-    if (vlab.GetCurrentLab()) {
+    if (handler.vlab.GetCurrentLab()) {
         // GO BACK to root
         if (expr[0] == "/" || (expr[0] == "go" && expr[1] == "back")) {
             handler.GoBack();
@@ -51,9 +50,9 @@ export async function HandleCommand(command: string) {
     }
     // Level 1 commands (inside vshell only)
     else {
-        if (expr[0] == "create" && expr[1] == "lab" && expr[2] != "") handler.CreateLab(expr[2])
+        if (expr[0] == "create" && expr[1] == "lab" && expr[2] != "") handler.CreateLab(expr[2], expr[3])
         else if (expr[0] == "delete" && expr[1] == "lab" && expr[2] != "") handler.DeleteLab(expr[2])
-        else if (expr[0] == "show" && expr[1] == "labs") vlab.ShowLabs();
+        else if (expr[0] == "show" && expr[1] == "labs") handler.vlab.ShowLabs();
         else if (expr[0] == "check" && expr[1] == "lab" && expr[2] != "") handler.CheckLab(expr[2])
         else if (expr[0] == "shell" && expr[1] == "lab" && expr[2] != "") handler.ShellLab(expr[2])
         else return `Invalid command`;

@@ -6,13 +6,14 @@ import * as docker from "../docker/client";
 import * as visuals from "../utils/visuals";
 import * as verify from "../utils/verify";
 // VLab
-import * as vl from "../../vlab";
+import * as cli from "../models/vshell"
 import { DefineHost, DefineNetwork } from "./interactive";
 import { Lab } from "../models/lab";
+import { VLab } from "../models/vlab";
 
-// Define variables
-const vshell = vl.vshell
-const vlab = vl.vlab
+// Init variables
+export var vlab = new VLab()
+export const vshell = new cli.VShell(vlab)
 
 // ###############
 // ###  HOSTS  ###
@@ -117,12 +118,12 @@ export function CheckNetwork(netname: string) {
 
 // CREATE new lab
 // create lab <labname>
-export async function CreateLab(labname: string, scut: boolean = false) {
+export async function CreateLab(labname: string, scut: string) {
     if (!verify.IsNameValid(labname))
         return `Invalid lab name ${labname}`;
     vlab.AddLab(new Lab(labname));
     visuals.DisplayNew(labname, "lab");
-    if (scut = true) {
+    if (scut == "&") {
         await docker.ClearContainers();
         await docker.ClearNetworks();
         vlab.EnterLab(vlab.FindLabByName(labname));

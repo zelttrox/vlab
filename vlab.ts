@@ -1,9 +1,4 @@
-import * as cli from "./src/models/vshell"
-import { VLab } from "./src/models/vlab"
-
-// Init VShell & VLab
-export var vlab = new VLab()
-export const vshell = new cli.VShell(vlab)
+import * as handler from "./src/core/handlers"
 
 // Start VShell
-vshell.Start()
+handler.vshell.Start()
