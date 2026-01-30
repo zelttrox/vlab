@@ -20,9 +20,9 @@ export class VShell {
 
     private GetPrompt(): string {
         if (this.shellMode == true)
-            return `\x1b[0m󱥸 \x1b[1;92mVLab 0.1\x1b[0m 󰇘 \x1b[1;32m${this.vlab.GetCurrentLab() ? this.vlab.GetCurrentLab()?.name : "/"}\x1b[0m 󰇘 \x1b[1;32mroot\x1b[1;92m@\x1b[1;32m${this.shellTarget}\x1b[1;92m $ \x1b[0m`;
+            return `\x1b[0m󱥸 \x1b[1;92mVLab v0.1\x1b[0m 󰇘 \x1b[1;32m${this.vlab.GetCurrentLab() ? this.vlab.GetCurrentLab()?.name : "/"}\x1b[0m 󰇘 \x1b[1;32mroot\x1b[1;92m@\x1b[1;32m${this.shellTarget}\x1b[1;92m $ \x1b[0m`;
         else
-            return `\x1b[0m󱥸 \x1b[1;92mVLab 0.1\x1b[0m 󰇘 \x1b[1;32m${this.vlab.GetCurrentLab() ? this.vlab.GetCurrentLab()?.name : "/"}\x1b[1;92m $ \x1b[0m`;
+            return `\x1b[0m󱥸 \x1b[1;92mVLab v0.1\x1b[0m 󰇘 \x1b[1;32m${this.vlab.GetCurrentLab() ? this.vlab.GetCurrentLab()?.name : "/"}\x1b[1;92m $ \x1b[0m`;
     }
 
     public RefreshPrompt() {

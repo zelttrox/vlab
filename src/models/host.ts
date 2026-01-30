@@ -22,13 +22,11 @@ export class Host {
         this.status = "down"
     }
 
-    // TODO: ADD REAL DISPLAY FUNC
     public CheckHost() {
-        console.log(`\x1b[96mName: \x1b[0m${this.name}`);
-        console.log(`\x1b[36mStatus: \x1b[0m${this.status}`);
-        console.log(`\x1b[36mImage: \x1b[0m${this.image}`);
-        console.log(`\x1b[36mShell: \x1b[0m${this.shell}`);
-        console.log(`\x1b[36mIPv4: \x1b[0m${this.ipv4}`);
-        
+        console.log(`\x1b[0m[\x1b[36mHost \x1b[96m${this.name}\x1b[0m]\x1b[0m`);
+        console.log(`  \x1b[36mStatus: \x1b[0m${this.status}`);
+        console.log(`  \x1b[36mImage: \x1b[0m${this.image}`);
+        console.log(`  \x1b[36mShell: \x1b[0m${this.shell}`);
+        console.log(`  \x1b[36mIPv4: \x1b[0m${this.ipv4}`);
     }
 }
