@@ -6,7 +6,11 @@ import * as handler from "../core/handlers"
 export async function HandleCommand(command: string) {
     if (command == "") return;
     var expr: string[] = command.split(" ");
-    if (handler.vlab.GetCurrentLab()) {
+    // Level 3 commands (inside a host, inside a lab)
+    if (handler.vlab.GetCurrentLab() && handler.vshell.shellMode == true) {
+        if (handler.vshell.shellTarget) await handler.ExecHost(handler.vshell.shellTarget, expr)
+    }
+    else if (handler.vlab.GetCurrentLab() && handler.vshell.shellMode == false) {
         // GO BACK to root
         if (expr[0] == "/" || (expr[0] == "go" && expr[1] == "back")) {
             handler.GoBack();
@@ -43,7 +47,7 @@ export async function HandleCommand(command: string) {
                 handler.ConnectHost(expr[2], expr[3]);
                 break;
             case "start":
-                handler.StartHost(expr[2]);
+                handler.StartHost(expr[1]);
                 break;
             case "shell":
                 handler.ShellHost(expr[2]);

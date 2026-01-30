@@ -1,19 +1,20 @@
 // Models
 import { Host } from "../models/host";
 import { Network } from "../models/network";
+import { Lab } from "../models/lab";
+import { VLab } from "../models/vlab";
+import { VShell } from "../models/vshell"
 // Utils
 import * as docker from "../docker/client";
 import * as visuals from "../utils/visuals";
 import * as verify from "../utils/verify";
-// VLab
-import * as cli from "../models/vshell"
-import { DefineHost, DefineNetwork } from "./interactive";
-import { Lab } from "../models/lab";
-import { VLab } from "../models/vlab";
+// CLI
+import * as interactive from "./interactive";
+import * as def from "../utils/default";
 
 // Init variables
 export var vlab = new VLab()
-export const vshell = new cli.VShell(vlab)
+export const vshell = new VShell(vlab)
 
 // ###############
 // ###  HOSTS  ###
@@ -23,7 +24,9 @@ export const vshell = new cli.VShell(vlab)
 // create host <hostname>
 export async function CreateHost(hostname: string) {
     if (!verify.IsNameValid(hostname)) return `Invalid container name '${hostname}'`;
-    const host = await DefineHost(vshell, new Host(hostname));
+    let host = new Host(hostname)
+    host = def.SetDefaultHost(host)
+    host = await interactive.DefineHost(vshell, host);
     vlab.GetCurrentLab()?.AddHost(host);
     host.docker = await docker.CreateContainer(host);
     visuals.DisplayNew(hostname, "host");
@@ -69,6 +72,15 @@ export function ShellHost(hostname: string) {
     else console.log(`Host ${hostname} does not exist`)
 }
 
+// EXEC command inside host using host name
+// (no command)
+export async function ExecHost(hostname: string, command: string[]) {
+    const host = vlab.GetCurrentLab()?.FindHostByName(hostname)
+    if (!host?.docker) return;
+    const output = await docker.ExecContainer(host?.docker, command)
+    console.log(output)
+}
+
 // SHOW all hosts in current lab
 // show hosts
 export function ShowHosts() {
@@ -89,7 +101,7 @@ export function CheckHost(hostname: string) {
 // create network <netname>
 export async function CreateNetwork(netname: string) {
     if (!verify.IsNameValid(netname)) return `Invalid network name '${netname}`;
-    const network = await DefineNetwork(vshell, new Network(netname));
+    const network = await interactive.DefineNetwork(vshell, new Network(netname));
     vlab.GetCurrentLab()?.AddNetwork(network);
     network.docker = await docker.CreateNetwork(network);
     visuals.DisplayNew(netname, "network");

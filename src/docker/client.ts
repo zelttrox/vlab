@@ -29,25 +29,35 @@ export function StartContainer(container: Docker.Container) {
 }
 
 // Exec docker container
-export async function ExecContainer(container: Docker.Container, args: string[]): Promise<{out: string, err: string}> {
-    console.log("executing", container.id);
-    const exec = await container.exec({
-        Cmd: args,
-        AttachStdin: true,
-        AttachStdout: true,
-        AttachStderr: true,
-        Tty: false,
-    });
-    const stream = await exec.start({ hijack: true });
-    let out = ""; let err = "";
-    stream.on("data", (chunk: Buffer) => {
-        out += chunk.toString()
-    })
-    await new Promise<void>((resolve, reject) => {
-        stream.on("end", resolve)
-        stream.on("error", reject)
-    })
-    return {out, err}
+export async function ExecContainer(container: Docker.Container, args: string[]): Promise<string> {
+  const exec = await container.exec({
+    Cmd: args,
+    AttachStdout: true,
+    AttachStderr: true,
+    Tty: false,
+  });
+  const stream = await exec.start({ hijack: true });
+  let out = ""; let err = "";
+
+  container.modem.demuxStream(
+      stream,
+    {
+      write: (chunk: Buffer) => {
+        out += chunk.toString();
+      }
+    } as any,
+    {
+      write: (chunk: Buffer) => {
+        err += chunk.toString();
+      }
+    } as any
+  );
+
+  await new Promise<void>((resolve, reject) => {
+    stream.on("end", resolve);
+    stream.on("error", reject);
+  });
+  return out;
 }
 
 // Remove all containers
