@@ -77,7 +77,7 @@ export function ShellHost(hostname: string) {
 export async function ExecHost(hostname: string, command: string[]) {
     const host = vlab.GetCurrentLab()?.FindHostByName(hostname)
     if (!host?.docker) return;
-    const output = await docker.ExecContainer(host?.docker, command)
+    const output = await docker.ExecContainer(host?.docker, command, vshell)
     console.log(output)
 }
 

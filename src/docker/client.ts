@@ -1,6 +1,7 @@
 import Docker from "dockerode";
 import { Host } from "../models/host";
 import { Network } from "../models/network";
+import { VShell } from "../models/vshell";
 
 const docker = new Docker();
 
@@ -29,35 +30,39 @@ export function StartContainer(container: Docker.Container) {
 }
 
 // Exec docker container
-export async function ExecContainer(container: Docker.Container, args: string[]): Promise<string> {
-  const exec = await container.exec({
-    Cmd: args,
-    AttachStdout: true,
-    AttachStderr: true,
-    Tty: false,
-  });
-  const stream = await exec.start({ hijack: true });
-  let out = ""; let err = "";
+export async function ExecContainer(container: Docker.Container, args: string[], vshell: VShell): Promise<string> {
+    let cwd = vshell.cwd || "/";
+    const cmd = args[0];
+    // cd command (update cwd)
+    if (cmd === "cd") {
+        let newPath = args[1] || "/";
+        if (!newPath.startsWith("/") && newPath != "..") {newPath = (cwd === "/" ? "/" : cwd + "/") + newPath;}
+        vshell.cwd = newPath;
+        vshell.RefreshPrompt();
+        return "";
+    }
+    // other commands
+    const exec = await container.exec({
+        Cmd: ["/bin/bash", "-c", `cd ${cwd} && ${args.join(" ")}`],
+        AttachStdout: true,
+        AttachStderr: true,
+        Tty: false,
+    });
 
-  container.modem.demuxStream(
-      stream,
-    {
-      write: (chunk: Buffer) => {
-        out += chunk.toString();
-      }
-    } as any,
-    {
-      write: (chunk: Buffer) => {
-        err += chunk.toString();
-      }
-    } as any
-  );
+    const stream = await exec.start({ hijack: true });
+    let out = "";
+    let err = "";
 
-  await new Promise<void>((resolve, reject) => {
-    stream.on("end", resolve);
-    stream.on("error", reject);
-  });
-  return out;
+    container.modem.demuxStream(
+        stream, 
+        {write: (chunk: Buffer) => {out += chunk.toString();}} as any,
+        {write: (chunk: Buffer) => {err += chunk.toString();}} as any
+    );
+    await new Promise<void>((resolve, reject) => {
+        stream.on("end", resolve);
+        stream.on("error", reject);
+    });
+    return out;
 }
 
 // Remove all containers
