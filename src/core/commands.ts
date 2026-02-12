@@ -1,6 +1,7 @@
 
 // Import handlers and vlab const
 import * as handler from "../core/handlers"
+import Save from "./save";
 
 // Determinate command based on vshell user input
 export async function HandleCommand(command: string) {
@@ -18,6 +19,8 @@ export async function HandleCommand(command: string) {
         }
         // Level 2 commands (inside a lab)
         switch (expr[0]) {
+            case "save":
+                Save(handler.vlab.GetCurrentLab(), "./data/save.json"); return;
             case "create":
                 switch (expr[1]) {
                     case "host": handler.CreateHost(expr[2]); return;
