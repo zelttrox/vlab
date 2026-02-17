@@ -1,7 +1,7 @@
 
 // Import handlers and vlab const
 import * as handler from "../core/handlers"
-import Save from "./save";
+import * as save from "./save";
 
 // Determinate command based on vshell user input
 export async function HandleCommand(command: string) {
@@ -20,7 +20,7 @@ export async function HandleCommand(command: string) {
         // Level 2 commands (inside a lab)
         switch (expr[0]) {
             case "save":
-                Save(handler.vlab.GetCurrentLab(), "./data/save.json"); return;
+                save.Save(handler.vlab.GetCurrentLab()); return;
             case "create":
                 switch (expr[1]) {
                     case "host": handler.CreateHost(expr[2]); return;
@@ -64,6 +64,10 @@ export async function HandleCommand(command: string) {
     // Level 1 commands (inside vshell only)
     else {
         if (expr[0] == "create" && expr[1] == "lab" && expr[2] != "") handler.CreateLab(expr[2], expr[3])
+        else if (expr[0] == "load" && expr[1] != null) {
+            console.log("loading", expr[1])
+            save.Load(expr[1])
+        }
         else if (expr[0] == "delete" && expr[1] == "lab" && expr[2] != "") handler.DeleteLab(expr[2])
         else if (expr[0] == "show" && expr[1] == "labs") handler.vlab.ShowLabs();
         else if (expr[0] == "check" && expr[1] == "lab" && expr[2] != "") handler.CheckLab(expr[2])
