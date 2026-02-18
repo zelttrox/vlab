@@ -46,7 +46,9 @@ export class Lab {
       })
   }
 
-  public ShowNetworks(): Network[] {
-    return this.networks
+  public ShowNetworks() {
+      this.networks.forEach(network => {
+          console.log(`\x1b[0m \x1b[1m${network.name} \x1b[0m(${network.docker?.id})`);
+      })
   }
 }

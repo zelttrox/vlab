@@ -101,10 +101,13 @@ export function CheckHost(hostname: string) {
 // create network <netname>
 export async function CreateNetwork(netname: string) {
     if (!verify.IsNameValid(netname)) return `Invalid network name '${netname}`;
-    const network = await interactive.DefineNetwork(vshell, new Network(netname));
+    let network = new Network(netname);
+    def.SetDefaultNetwork(network);
+    network = await interactive.DefineNetwork(vshell, new Network(netname));
     vlab.GetCurrentLab()?.AddNetwork(network);
     network.docker = await docker.CreateNetwork(network);
     visuals.DisplayNew(netname, "network");
+    vshell.RefreshPrompt()
 }
 
 // DELETE network using net name
