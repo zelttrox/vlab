@@ -1,12 +1,20 @@
-
 // Import handlers and vlab const
-import * as handler from "../core/handlers"
+import ReportBug from "../beta/bug";
+import * as logs from "../beta/logs";
+import * as handler from "../core/handlers";
 import * as save from "./save";
 
 // Determinate command based on vshell user input
 export async function HandleCommand(command: string) {
     if (command == "") return;
     var expr: string[] = command.split(" ");
+    // BUG COMMAND
+    if (expr[0] == "bug") {
+        ReportBug(expr[1]);
+        handler.vshell.RefreshPrompt();
+        return;
+    }
+    else logs.LogCommand(command)
     // Level 3 commands (inside a host, inside a lab)
     if (handler.vlab.GetCurrentLab() && handler.vshell.shellMode == true) {
         if (handler.vshell.shellTarget) await handler.ExecHost(handler.vshell.shellTarget, expr)
@@ -65,8 +73,8 @@ export async function HandleCommand(command: string) {
     else {
         if (expr[0] == "create" && expr[1] == "lab" && expr[2] != "") handler.CreateLab(expr[2], expr[3])
         else if (expr[0] == "load" && expr[1] != null) {
-            console.log("loading", expr[1])
-            save.Load(expr[1])
+            console.log("loading", expr[1]);
+            save.Load(expr[1]);
         }
         else if (expr[0] == "delete" && expr[1] == "lab" && expr[2] != "") handler.DeleteLab(expr[2])
         else if (expr[0] == "show" && expr[1] == "labs") handler.vlab.ShowLabs();
