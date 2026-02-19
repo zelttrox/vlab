@@ -15,9 +15,13 @@ export async function DefineHost(vshell: VShell, host: Host): Promise<Host> {
 
 // Interactive prompting for network creation
 export async function DefineNetwork(vshell: VShell, network: Network): Promise<Network> {
-    network.driver = await vshell?.Ask("Driver (host|bridge|overlay|macvlan): ",);
-    network.ipRange = await vshell?.Ask("IP Range: ");
-    network.subnet = await vshell?.Ask("Subnet: ");
-    network.gateway = await vshell?.Ask("Gateway: ");
+    let driver = await vshell?.Ask("Driver (host|bridge|overlay|macvlan): ",);
+    let ipRange = await vshell?.Ask("IP Range: ");
+    let subnet = await vshell?.Ask("Subnet: ");
+    let gateway = await vshell?.Ask("Gateway: ");
+    if (driver != "") network.driver = driver;
+    if (ipRange != "") network.ipRange = ipRange;
+    if (subnet != "") network.subnet = subnet;
+    if (gateway != "") network.gateway = gateway; 
     return new Promise((resolve) => { resolve(network) });
 }

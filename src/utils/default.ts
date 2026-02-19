@@ -11,6 +11,9 @@ export function SetDefaultHost(host: Host): Host {
 
 // Set default required values for network creation
 export function SetDefaultNetwork(network: Network): Network {
-    network.driver = "host";
+    network.driver = "bridge";
+    network.ipRange = "10.10.0.0/24";
+    network.subnet = "10.10.0.0/24";
+    network.gateway = "10.10.0.1"
     return network;
 }

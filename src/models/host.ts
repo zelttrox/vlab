@@ -28,5 +28,6 @@ export class Host {
         console.log(`  \x1b[36mImage: \x1b[0m${this.image}`);
         console.log(`  \x1b[36mShell: \x1b[0m${this.shell}`);
         console.log(`  \x1b[36mIPv4: \x1b[0m${this.ipv4}`);
+        this.networks.forEach(network => {console.log(`  \x1b[36mNetwork: \x1b[0m${network.name}`);})
     }
 }

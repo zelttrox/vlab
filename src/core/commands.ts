@@ -50,12 +50,12 @@ export async function HandleCommand(command: string) {
                 break;
             case "check":
                 switch (expr[1]) {
-                    case "host": handler.CheckHost(expr[2]); return;
-                    case "network": handler.CheckNetwork(expr[2]); return;
+                    case "host": handler.CheckHost(expr[2]); break;
+                    case "network": handler.CheckNetwork(expr[2]); break;
                     default: return `Invalid command '${command}'`;
                 }
             case "connect":
-                handler.ConnectHost(expr[2], expr[3]);
+                await handler.ConnectHost(expr[1], expr[2]);
                 break;
             case "start":
                 handler.StartHost(expr[1]);

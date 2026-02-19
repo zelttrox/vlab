@@ -36,7 +36,7 @@ export async function ExecContainer(container: Docker.Container, args: string[],
     // cd command (update cwd)
     if (cmd === "cd") {
         let newPath = args[1] || "/";
-        if (!newPath.startsWith("/") && newPath != "..") {newPath = (cwd === "/" ? "/" : cwd + "/") + newPath;}
+        if (!newPath.startsWith("/") && newPath != "..") { newPath = (cwd === "/" ? "/" : cwd + "/") + newPath; }
         vshell.cwd = newPath;
         vshell.RefreshPrompt();
         return "";
@@ -54,9 +54,9 @@ export async function ExecContainer(container: Docker.Container, args: string[],
     let err = "";
 
     container.modem.demuxStream(
-        stream, 
-        {write: (chunk: Buffer) => {out += chunk.toString();}} as any,
-        {write: (chunk: Buffer) => {err += chunk.toString();}} as any
+        stream,
+        { write: (chunk: Buffer) => { out += chunk.toString(); } } as any,
+        { write: (chunk: Buffer) => { err += chunk.toString(); } } as any
     );
     await new Promise<void>((resolve, reject) => {
         stream.on("end", resolve);
@@ -71,7 +71,7 @@ export async function ClearContainers() {
         const containers = await docker.listContainers({ all: true });
         for (const cont of containers) {
             const container = docker.getContainer(cont.Id);
-            await container.stop().catch(() => {});
+            await container.stop().catch(() => { });
             await container.remove({ force: true });
         }
     } catch (err) {

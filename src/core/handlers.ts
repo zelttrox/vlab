@@ -45,10 +45,13 @@ export function DeleteHost(hostname: string) {
 
 // CONNECT host to network in same lab
 // connect <hostname> <netname>
-export function ConnectHost(hostname: string, netname: string) {
+export async function ConnectHost(hostname: string, netname: string) {
     const host = vlab.GetCurrentLab()?.FindHostByName(hostname);
     const network = vlab.GetCurrentLab()?.FindNetworkByName(netname);
-    if (network && host) docker.ConnectHost(host, network);
+    if (network && host) {
+        await docker.ConnectHost(host, network);
+        host?.networks.push(network);
+    }
 }
 
 // START host using host name
@@ -102,8 +105,8 @@ export function CheckHost(hostname: string) {
 export async function CreateNetwork(netname: string) {
     if (!verify.IsNameValid(netname)) return `Invalid network name '${netname}`;
     let network = new Network(netname);
-    def.SetDefaultNetwork(network);
-    network = await interactive.DefineNetwork(vshell, new Network(netname));
+    network = def.SetDefaultNetwork(network);
+    network = await interactive.DefineNetwork(vshell, network);
     vlab.GetCurrentLab()?.AddNetwork(network);
     network.docker = await docker.CreateNetwork(network);
     visuals.DisplayNew(netname, "network");
