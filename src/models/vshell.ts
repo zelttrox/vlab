@@ -6,9 +6,7 @@ import Docker from "dockerode";
 export class VShell {
     public vlab: VLab;
     public shellMode: boolean;
-    public shellTarget?: string;
     public exec?: Docker.Exec;
-    public cwd: string = "/";
     private rl: readline.Interface;
 
     constructor(vlab: VLab) {
@@ -23,7 +21,7 @@ export class VShell {
 
     private GetPrompt(): string {
         if (this.shellMode == true)
-            return `\x1b[0m󱥸 \x1b[1;92mVLab v0.1\x1b[0m 󰇘 \x1b[1;32m${this.vlab.GetCurrentLab() ? this.vlab.GetCurrentLab()?.name : "/"}\x1b[0m 󰇘 \x1b[1;32mroot\x1b[1;92m@\x1b[1;32m${this.shellTarget} ${this.cwd}\x1b[1;92m $ \x1b[0m`;
+            return `\x1b[0m󱥸 \x1b[1;92mVLab v0.1\x1b[0m 󰇘 \x1b[1;32m${this.vlab.GetCurrentLab() ? this.vlab.GetCurrentLab()?.name : "/"}\x1b[0m 󰇘 \x1b[1;92m $ \x1b[0m`;
         else
             return `\x1b[0m󱥸 \x1b[1;92mVLab v0.1\x1b[0m 󰇘 \x1b[1;32m${this.vlab.GetCurrentLab() ? this.vlab.GetCurrentLab()?.name : "/"}\x1b[1;92m $ \x1b[0m`;
     }
@@ -55,24 +53,26 @@ export class VShell {
         });
     }
 
-    public Pause() {
+    public async Pause() {
         this.rl.pause();
+        console.log("paused vshell")
     }
 
-    public Resume() {
+    public async Resume() {
         this.rl.resume();
         this.RefreshPrompt();
+        console.log("resumed vshell")
     }
 
-    public ShellIn(target: string) {
+    public async ShellIn(target: string) {
         this.shellMode = true;
-        this.shellTarget = target;
         this.RefreshPrompt();
+        console.log("shelled in", target)
     }
 
-    public ShellOut() {
+    public async ShellOut() {
         this.shellMode = false;
-        this.shellTarget = undefined;
         this.RefreshPrompt();
+        console.log("shelled out")
     }
 }

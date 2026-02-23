@@ -72,22 +72,21 @@ export async function ShellHost(hostname: string) {
     if (!host) console.log(`Host ${hostname} does not exist`)
     else if (host?.status == "down") console.log(`Host ${hostname} is down`)
     else if (host?.name) {
-        vshell.ShellIn(host?.name);
-        vshell.Pause();
-        const output = await docker.ExecContainer(host, vshell);
-        console.log(output);
-        vshell.Resume();
-        vshell.ShellOut();
+        await vshell.ShellIn(host?.name);
+        await vshell.Pause();
+        await docker.ExecContainer(host);
+        await vshell.Resume();
+        await vshell.ShellOut();
     }
     else console.log(`Host ${hostname} does not exist`)
 }
 
 // EXEC command inside host using host name
 // (no command)
-export async function ExecHost(hostname: string, command: string[]) {
+export async function ExecHost(hostname: string) {
     const host = vlab.GetCurrentLab()?.FindHostByName(hostname)
     if (!host?.docker) return;
-    const output = await docker.ExecContainer(host, vshell)
+    const output = await docker.ExecContainer(host)
     console.log(output)
 }
 

@@ -15,11 +15,7 @@ export async function HandleCommand(command: string) {
         return;
     }
     else logs.LogCommand(command)
-    // Level 3 commands (inside a host, inside a lab)
-    if (handler.vlab.GetCurrentLab() && handler.vshell.shellMode == true) {
-        if (handler.vshell.shellTarget) await handler.ExecHost(handler.vshell.shellTarget, expr)
-    }
-    else if (handler.vlab.GetCurrentLab() && handler.vshell.shellMode == false) {
+    if (handler.vlab.GetCurrentLab() && handler.vshell.shellMode == false) {
         // GO BACK to root
         if (expr[0] == "/" || (expr[0] == "go" && expr[1] == "back")) {
             handler.GoBack();

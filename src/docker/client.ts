@@ -4,6 +4,7 @@ import {spawn} from "child_process"
 import { Host } from "../models/host";
 import { Network } from "../models/network";
 import { VShell } from "../models/vshell";
+import { vshell } from "../core/handlers";
 
 const docker = new Docker();
 
@@ -17,8 +18,9 @@ export async function CreateContainer(host: Host) {
     try {
         const container = await docker.createContainer({
             Image: host.image,
-            Cmd: [host.shell, "-c", "sleep infinity"],
+            Cmd: ["tail", "-f", "/dev/null"],
             name: host.name,
+            OpenStdin: true,
         });
         return container;
     } catch (err) {
@@ -34,13 +36,20 @@ export function StartContainer(container: Docker.Container) {
 // Exec docker container
 export async function ExecContainer(host: Host): Promise<void> {
     if (!host.docker) return;
-    const process = spawn("docker", ["exec", "-it", host.name, host.shell], {
-        stdio: ["inherit", "inherit", "inherit"],
+    
+    const childProcess = spawn("docker", ["exec", "-it", host.name, host.shell], {
+        stdio: "inherit",
         shell: false
     });
+    
     return new Promise<void>((resolve) => {
-        process.on("exit", () => { resolve() });
-        process.on("error", (err) => { console.log(err); resolve() });
+        childProcess.on("exit", async (code) => {
+            resolve();
+        });
+        childProcess.on("error", (err) => {
+            console.error("Docker exec error:", err);
+            resolve();
+        });
     });
 }
 
