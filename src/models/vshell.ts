@@ -55,6 +55,15 @@ export class VShell {
         });
     }
 
+    public Pause() {
+        this.rl.pause();
+    }
+
+    public Resume() {
+        this.rl.resume();
+        this.RefreshPrompt();
+    }
+
     public ShellIn(target: string) {
         this.shellMode = true;
         this.shellTarget = target;

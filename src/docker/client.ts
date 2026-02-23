@@ -1,4 +1,6 @@
 import Docker from "dockerode";
+import {spawn} from "child_process"
+
 import { Host } from "../models/host";
 import { Network } from "../models/network";
 import { VShell } from "../models/vshell";
@@ -30,39 +32,16 @@ export function StartContainer(container: Docker.Container) {
 }
 
 // Exec docker container
-export async function ExecContainer(container: Docker.Container, args: string[], vshell: VShell): Promise<string> {
-    let cwd = vshell.cwd || "/";
-    const cmd = args[0];
-    // cd command (update cwd)
-    if (cmd === "cd") {
-        let newPath = args[1] || "/";
-        if (!newPath.startsWith("/") && newPath != "..") { newPath = (cwd === "/" ? "/" : cwd + "/") + newPath; }
-        vshell.cwd = newPath;
-        vshell.RefreshPrompt();
-        return "";
-    }
-    // other commands
-    const exec = await container.exec({
-        Cmd: ["/bin/bash", "-c", `cd ${cwd} && ${args.join(" ")}`],
-        AttachStdout: true,
-        AttachStderr: true,
-        Tty: false,
+export async function ExecContainer(host: Host): Promise<void> {
+    if (!host.docker) return;
+    const process = spawn("docker", ["exec", "-it", host.name, host.shell], {
+        stdio: ["inherit", "inherit", "inherit"],
+        shell: false
     });
-
-    const stream = await exec.start({ hijack: true });
-    let out = "";
-    let err = "";
-
-    container.modem.demuxStream(
-        stream,
-        { write: (chunk: Buffer) => { out += chunk.toString(); } } as any,
-        { write: (chunk: Buffer) => { err += chunk.toString(); } } as any
-    );
-    await new Promise<void>((resolve, reject) => {
-        stream.on("end", resolve);
-        stream.on("error", reject);
+    return new Promise<void>((resolve) => {
+        process.on("exit", () => { resolve() });
+        process.on("error", (err) => { console.log(err); resolve() });
     });
-    return out;
 }
 
 // Remove all containers

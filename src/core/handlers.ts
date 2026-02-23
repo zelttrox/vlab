@@ -67,11 +67,18 @@ export function StartHost(hostname: string) {
 
 // SHELL into host using host name
 // shell host <hostname>
-export function ShellHost(hostname: string) {
+export async function ShellHost(hostname: string) {
     const host = vlab.GetCurrentLab()?.FindHostByName(hostname);
     if (!host) console.log(`Host ${hostname} does not exist`)
     else if (host?.status == "down") console.log(`Host ${hostname} is down`)
-    else if (host?.name) vshell.ShellIn(host?.name)
+    else if (host?.name) {
+        vshell.ShellIn(host?.name);
+        vshell.Pause();
+        const output = await docker.ExecContainer(host, vshell);
+        console.log(output);
+        vshell.Resume();
+        vshell.ShellOut();
+    }
     else console.log(`Host ${hostname} does not exist`)
 }
 
@@ -80,7 +87,7 @@ export function ShellHost(hostname: string) {
 export async function ExecHost(hostname: string, command: string[]) {
     const host = vlab.GetCurrentLab()?.FindHostByName(hostname)
     if (!host?.docker) return;
-    const output = await docker.ExecContainer(host?.docker, command, vshell)
+    const output = await docker.ExecContainer(host, vshell)
     console.log(output)
 }
 
