@@ -72,11 +72,11 @@ export async function ShellHost(hostname: string) {
     if (!host) console.log(`Host ${hostname} does not exist`)
     else if (host?.status == "down") console.log(`Host ${hostname} is down`)
     else if (host?.name) {
-        await vshell.ShellIn(host?.name);
-        await vshell.Pause();
+        vshell.ShellIn(host?.name);
+        vshell.Pause();
         await docker.ExecContainer(host);
-        await vshell.Resume();
-        await vshell.ShellOut();
+        vshell.ShellOut();
+        vshell.Resume();
     }
     else console.log(`Host ${hostname} does not exist`)
 }

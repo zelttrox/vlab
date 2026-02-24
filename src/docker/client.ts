@@ -43,7 +43,7 @@ export async function ExecContainer(host: Host): Promise<void> {
     });
     
     return new Promise<void>((resolve) => {
-        childProcess.on("exit", async (code) => {
+        childProcess.on("exit", async () => {
             resolve();
         });
         childProcess.on("error", (err) => {
