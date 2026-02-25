@@ -53,6 +53,17 @@ export async function ExecContainer(host: Host): Promise<void> {
     });
 }
 
+// Exec a command in docker container
+export async function ExecCommand(host: Host, cmd: string[]) {
+    if (!host.docker) return;
+    const exec = await host.docker.exec({
+        Cmd: cmd,
+        AttachStderr: false,
+        AttachStdout: false,
+    })
+    exec.start({Detach: true});
+}
+
 // Remove all containers
 export async function ClearContainers() {
     try {

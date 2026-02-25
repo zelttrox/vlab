@@ -74,6 +74,7 @@ export async function ShellHost(hostname: string) {
     else if (host?.name) {
         vshell.ShellIn(host?.name);
         vshell.Pause();
+        await docker.ExecCommand(host, ["echo", "test"])
         await docker.ExecContainer(host);
         vshell.ShellOut();
         vshell.Resume();
