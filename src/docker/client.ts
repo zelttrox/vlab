@@ -116,7 +116,7 @@ export function CreateNetwork(network: Network) {
 
 // Attach network to host
 export async function ConnectHost(host: Host, network: Network) {
-    console.log("connecting", host.name, "to", network.name);
+    //console.log("connecting", host.name, "to", network.name);
     await network.docker?.connect({
         Container: host.name,
         EndpointConfig: {
