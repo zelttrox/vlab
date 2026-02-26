@@ -3,8 +3,6 @@ import {spawn} from "child_process"
 
 import { Host } from "../models/host";
 import { Network } from "../models/network";
-import { VShell } from "../models/vshell";
-import { vshell } from "../core/handlers";
 
 const docker = new Docker();
 

@@ -11,10 +11,20 @@ import * as verify from "../utils/verify";
 // CLI
 import * as interactive from "./interactive";
 import * as def from "../utils/default";
+// Beta
+import * as logs from "../beta/logs"
 
 // Init variables
 export var vlab = new VLab()
 export const vshell = new VShell(vlab)
+
+// Init function
+export async function InitVLab() {
+    logs.ClearLogs();
+    await docker.ClearContainers();
+    await docker.ClearNetworks();
+    vshell.Start();
+}
 
 // ###############
 // ###  HOSTS  ###
@@ -69,12 +79,13 @@ export function StartHost(hostname: string) {
 // shell host <hostname>
 export async function ShellHost(hostname: string) {
     const host = vlab.GetCurrentLab()?.FindHostByName(hostname);
-    if (!host) console.log(`Host ${hostname} does not exist`)
-    else if (host?.status == "down") console.log(`Host ${hostname} is down`)
+    if (!host) console.log(`Host ${hostname} does not exist`);
+    else if (host?.status == "down") console.log(`Host ${hostname} is down`);
     else if (host?.name) {
         vshell.ShellIn(host?.name);
         vshell.Pause();
-        await docker.ExecCommand(host, ["echo", "test"])
+        await docker.ExecCommand(host, ["sh", "-c", `echo 'PS1="${vshell.GetPrompt()}"' >> ~/.bashrc`]);
+        //await docker.ExecCommand(host, ["source", "~/.bashrc"]);
         await docker.ExecContainer(host);
         vshell.ShellOut();
         vshell.Resume();
@@ -188,8 +199,6 @@ export function CheckLab(labname: string) {
 // shell lab <labname>
 export async function ShellLab(labname: string) {
     if (vlab.FindLabByName(labname).name == "") return `Lab ${labname} does not exist`;
-    await docker.ClearContainers();
-    await docker.ClearNetworks();
     vlab.EnterLab(vlab.FindLabByName(labname));
     vshell?.RefreshPrompt();
 }

@@ -1,8 +1,4 @@
-import * as handler from "./src/core/handlers";
-import * as logs from "./src/beta/logs";
+import * as handler from "./src/core/handlers"
 
-// Clear history
-logs.ClearLogs();
-
-// Start VShell
-handler.vshell.Start();
+// Init
+handler.InitVLab();

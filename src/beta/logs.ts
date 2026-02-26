@@ -14,7 +14,7 @@ export function ReadLogs(): string {
     return history.toString();
 }
 
-// Clear history logs
+// const history logs
 export function ClearLogs() {
     fs.writeFileSync("./data/history.txt", "")
 }

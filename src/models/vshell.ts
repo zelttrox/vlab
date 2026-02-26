@@ -5,12 +5,14 @@ import { VLab } from "./vlab";
 export class VShell {
     public vlab: VLab;
     public shellMode: boolean;
+    public shellTarget?: string;
     private rl?: readline.Interface;
     private paused: boolean = false;
 
     constructor(vlab: VLab) {
         this.vlab = vlab;
         this.shellMode = false;
+        this.shellTarget = "";
         this.InitReadline();
     }
 
@@ -22,12 +24,12 @@ export class VShell {
         });
     }
 
-    private GetPrompt(): string {
+    public GetPrompt(): string {
         if (this.shellMode == true)
-            return `\x1b[0m󱥸 \x1b[1;92mVLab v0.1\x1b[0m 󰇘 \x1b[1;32m${this.vlab.GetCurrentLab() ? this.vlab.GetCurrentLab()?.name : "/"}\x1b[0m 󰇘 \x1b[1;92m $ \x1b[0m`;
+            return `\x1b[0m󱥸 \x1b[1;92mVLab v0.1\x1b[0m 󰇘 \x1b[1;32m${this.vlab.GetCurrentLab() ? this.vlab.GetCurrentLab()?.name : "/"}\x1b[0m 󰇘 \x1b[1;32m\\u\x1b[1;92m@\x1b[1;32m${this.shellTarget} \\w\x1b[1;92m $ \x1b[0m`;
         else
             return `\x1b[0m󱥸 \x1b[1;92mVLab v0.1\x1b[0m 󰇘 \x1b[1;32m${this.vlab.GetCurrentLab() ? this.vlab.GetCurrentLab()?.name : "/"}\x1b[1;92m $ \x1b[0m`;
-    }
+        }
 
     private SetupListeners() {
         this.rl?.on("line", async (line) => {
@@ -77,6 +79,7 @@ export class VShell {
 
     public async ShellIn(target: string) {
         this.shellMode = true;
+        this.shellTarget = target;
     }
 
     public async ShellOut() {
