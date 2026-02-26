@@ -67,6 +67,10 @@ export async function ConnectHost(hostname: string, netname: string) {
 // START host using host name
 // start <hostname>
 export function StartHost(hostname: string) {
+    if (vlab.GetCurrentLab()?.FindHostByName(hostname) == undefined) {
+        console.log(`Host ${hostname} does not exist`);
+        return;
+    }
     const host = vlab.GetCurrentLab()?.FindHostByName(hostname);
     if (host?.docker) {
         docker.StartContainer(host.docker);
@@ -144,7 +148,7 @@ export function DeleteNetwork(netname: string) {
 // SHOW all networks in current lab
 // show networks
 export function ShowNetworks() {
-    console.log(vlab.GetCurrentLab()?.ShowNetworks());
+    vlab.GetCurrentLab()?.ShowNetworks();
 }
 
 // CHECK network using net name

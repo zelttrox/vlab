@@ -14,6 +14,12 @@ export async function HandleCommand(command: string) {
         handler.vshell.RefreshPrompt();
         return;
     }
+    // EXIT COMMAND
+    if (expr[0] == "exit") {
+        if (handler.vlab.GetCurrentLab()) handler.GoBack();
+        else process.exit();
+        return;
+    }
     else logs.LogCommand(command)
     if (handler.vlab.GetCurrentLab() && handler.vshell.shellMode == false) {
         // GO BACK to root
@@ -54,8 +60,7 @@ export async function HandleCommand(command: string) {
                 await handler.ConnectHost(expr[1], expr[2]);
                 break;
             case "start":
-                handler.StartHost(expr[1]);
-                break;
+                return handler.StartHost(expr[1]);
             case "shell":
                 handler.ShellHost(expr[2]);
                 break;
