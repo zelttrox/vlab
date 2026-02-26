@@ -11,6 +11,8 @@ import * as verify from "../utils/verify";
 // CLI
 import * as interactive from "./interactive";
 import * as def from "../utils/default";
+import { SaveExists } from "./save";
+
 // Beta
 import * as logs from "../beta/logs"
 
@@ -18,12 +20,17 @@ import * as logs from "../beta/logs"
 export var vlab = new VLab()
 export const vshell = new VShell(vlab)
 
-// Init function
+// Init VLab
 export async function InitVLab() {
     logs.ClearLogs();
     await docker.ClearContainers();
     await docker.ClearNetworks();
     vshell.Start();
+}
+
+// Init saved labs
+export async function InitLabs() {
+    
 }
 
 // ###############
@@ -89,7 +96,6 @@ export async function ShellHost(hostname: string) {
         vshell.ShellIn(host?.name);
         vshell.Pause();
         await docker.ExecCommand(host, ["sh", "-c", `echo 'PS1="${vshell.GetPrompt()}"' >> ~/.bashrc`]);
-        //await docker.ExecCommand(host, ["source", "~/.bashrc"]);
         await docker.ExecContainer(host);
         vshell.ShellOut();
         vshell.Resume();
@@ -168,6 +174,7 @@ export async function CreateLab(labname: string, scut: string) {
         return `Invalid lab name ${labname}`;
     vlab.AddLab(new Lab(labname));
     visuals.DisplayNew(labname, "lab");
+    if (SaveExists(vlab.FindLabByName(labname))) vlab.FindLabByName(labname).saved = true;
     if (scut == "&") {
         await docker.ClearContainers();
         await docker.ClearNetworks();

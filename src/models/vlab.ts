@@ -1,58 +1,60 @@
 import { Lab } from "./lab";
 
 export class VLab {
-    public labs: Lab[]
-    private currentLab: Lab | null = null
+    public labs: Lab[];
+    private currentLab: Lab | null = null;
 
     constructor() {
-        this.labs = []
-        this.currentLab = null
+        this.labs = [];
+        this.currentLab = null;
     }
 
     public AddLab(lab: Lab) {
-        this.labs.push(lab)
+        this.labs.push(lab);
     }
 
     public FindLabByName(name: string): Lab {
-        let result: Lab = new Lab("")
-        this.labs.forEach(lab => {if (lab.name == name) result = lab})
-        return result.name == name ? result : new Lab("")
+        let result: Lab = new Lab("");
+        this.labs.forEach(lab => { if (lab.name == name) result = lab });
+        return result.name == name ? result : new Lab("");
     }
 
     public DeleteLab(lab: Lab) {
-        this.labs.splice(this.labs.indexOf(lab))
+        this.labs.splice(this.labs.indexOf(lab));
     }
 
     // TODO: Make the display prettier + with colors
     public CheckLab(lab: Lab) {
-        console.log(`   [Lab: ${lab.name}]`)
-        console.log("   << Hosts >>")
-        if (!this.currentLab) return
-        if (this.currentLab.hosts = []) console.log("   none")
+        console.log(`   [Lab: ${lab.name}]`);
+        console.log("   << Hosts >>");
+        if (!this.currentLab) return;
+        if (this.currentLab.hosts = []) console.log("   none");
             this.currentLab.hosts.forEach(host => {
-                console.log(`    - ${host.name} (${host.image})`)
+                console.log(`    - ${host.name} (${host.image})`);
             })
             console.log("   << Networks >>")
-        if (this.currentLab.networks = []) console.log("   none")
+        if (this.currentLab.networks = []) console.log("   none");
             this.currentLab.networks.forEach(network => {
-                console.log(`    - ${network.name}`)
+                console.log(`    - ${network.name}`);
         })
     }
 
     // TODO: Make the display prettier + with colors
     public ShowLabs() {
-        console.log(this.labs)
+        this.labs.forEach(lab => {
+            console.log(`\x1b[0m \x1b[1m${lab.name} \x1b[0m(${lab.saved ? "Saved" : "Not saved"})`);
+        })
     }
 
     public EnterLab(lab: Lab) {
-        this.currentLab = lab
+        this.SetCurrentLab(lab);
     }
 
     public GetCurrentLab(): Lab | null {
-        return this.currentLab
+        return this.currentLab;
     }
 
     public SetCurrentLab(lab: Lab | null) {
-        this.currentLab = lab
+        this.currentLab = lab;
     }
 }

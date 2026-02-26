@@ -31,6 +31,8 @@ export async function HandleCommand(command: string) {
         switch (expr[0]) {
             case "save":
                 save.Save(handler.vlab.GetCurrentLab()); return;
+            case "unsave":
+                save.Unsave(handler.vlab.GetCurrentLab()); return;
             case "create":
                 switch (expr[1]) {
                     case "host": handler.CreateHost(expr[2]); return;
