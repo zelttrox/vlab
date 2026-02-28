@@ -232,6 +232,12 @@ Stop host
 stop <host>
 ```
 
+Restart host
+
+```bash
+restart <host>
+```
+
 Enter host
 
 ```bash

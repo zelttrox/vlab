@@ -71,11 +71,11 @@ export async function ConnectHost(hostname: string, netname: string) {
 
 // START host using host name
 // start <hostname>
-export function StartHost(hostname: string) {
+export async function StartHost(hostname: string) {
     const host = vlab.GetCurrentLab()?.FindHostByName(hostname);
     if (!utils.HostExists(host, hostname)) return;
     if (host?.docker) {
-        docker.StartContainer(host.docker);
+        await docker.StartContainer(host.docker);
         host.status = "up";
         console.log(`${hostname} is up!`);
     }
@@ -83,13 +83,25 @@ export function StartHost(hostname: string) {
 
 // STOP host using host name
 // stop <hostname>
-export function StopHost(hostname: string) {
+export async function StopHost(hostname: string) {
     const host = vlab.GetCurrentLab()?.FindHostByName(hostname);
     if (!utils.HostExists(host, hostname)) return;
     if (host?.docker) {
-        docker.StopContainer(host.docker);
+        await docker.StopContainer(host.docker);
         host.status = "down";
         console.log(`${hostname} is down!`)
+    }
+}
+
+// RESTART host using host name
+// restart <hostname>
+export async function RestartHost(hostname: string) {
+    const host = vlab.GetCurrentLab()?.FindHostByName(hostname);
+    if (!utils.HostExists(host, hostname)) return;
+    if (host?.docker) {
+        await docker.RestartContainer(host.docker);
+        console.log(`${hostname} has been restarted!`)
+        
     }
 }
 

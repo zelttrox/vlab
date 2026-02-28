@@ -65,6 +65,8 @@ export async function HandleCommand(command: string) {
                 return handler.StartHost(expr[1]);
             case "stop":
                 return handler.StopHost(expr[1]);
+            case "restart":
+                return handler.RestartHost(expr[1]);
             case "shell":
                 handler.ShellHost(expr[1]);
                 break;

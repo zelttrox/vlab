@@ -27,13 +27,18 @@ export async function CreateContainer(host: Host) {
 }
 
 // Start docker container
-export function StartContainer(container: Docker.Container) {
-    container.start();
+export async function StartContainer(container: Docker.Container) {
+    await container.start();
 }
 
 // Stop docker container
-export function StopContainer(container: Docker.Container) {
-    container.stop();
+export async function StopContainer(container: Docker.Container) {
+    await container.stop();
+}
+
+// Restart docker container
+export async function RestartContainer(container: Docker.Container) {
+    await container.restart();
 }
 
 // Exec docker container
