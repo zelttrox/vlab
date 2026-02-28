@@ -31,6 +31,11 @@ export function StartContainer(container: Docker.Container) {
     container.start();
 }
 
+// Stop docker container
+export function StopContainer(container: Docker.Container) {
+    container.stop();
+}
+
 // Exec docker container
 export async function ExecContainer(host: Host): Promise<void> {
     if (!host.docker) return;

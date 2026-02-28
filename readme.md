@@ -166,7 +166,7 @@ show labs
 Enter lab
 
 ```bash
-shell lab <name>
+shell <name>
 ```
 
 Exit lab
@@ -226,10 +226,16 @@ Start host
 start <host>
 ```
 
+Stop host
+
+```bash
+stop <host>
+```
+
 Enter host
 
 ```bash
-shell host <name>
+shell <name>
 ```
 
 </aside>

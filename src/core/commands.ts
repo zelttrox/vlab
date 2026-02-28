@@ -63,8 +63,10 @@ export async function HandleCommand(command: string) {
                 break;
             case "start":
                 return handler.StartHost(expr[1]);
+            case "stop":
+                return handler.StopHost(expr[1]);
             case "shell":
-                handler.ShellHost(expr[2]);
+                handler.ShellHost(expr[1]);
                 break;
             case "exit":
                 handler.vshell.ShellOut();
@@ -81,8 +83,8 @@ export async function HandleCommand(command: string) {
         }
         else if (expr[0] == "delete" && expr[1] == "lab" && expr[2] != "") handler.DeleteLab(expr[2])
         else if (expr[0] == "show" && expr[1] == "labs") handler.vlab.ShowLabs();
-        else if (expr[0] == "check" && expr[1] == "lab" && expr[2] != "") handler.CheckLab(expr[2])
-        else if (expr[0] == "shell" && expr[1] == "lab" && expr[2] != "") handler.ShellLab(expr[2])
+        else if (expr[0] == "check" && expr[1] == "lab" && expr[2] != "") handler.CheckLab(expr[1])
+        else if (expr[0] == "shell" && expr[1] != "") handler.ShellLab(expr[1])
         else return `Invalid command`;
     }
 }

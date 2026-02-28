@@ -6,11 +6,9 @@ import { VLab } from "../models/vlab";
 import { VShell } from "../models/vshell"
 // Utils
 import * as docker from "../docker/client";
-import * as visuals from "../utils/visuals";
-import * as verify from "../utils/verify";
+import * as utils from "./utils";
 // CLI
 import * as interactive from "./interactive";
-import * as def from "../utils/default";
 import { SaveExists } from "./save";
 
 // Beta
@@ -40,13 +38,13 @@ export async function InitLabs() {
 // CREATE new host in current lab
 // create host <hostname>
 export async function CreateHost(hostname: string) {
-    if (!verify.IsNameValid(hostname)) return `Invalid container name '${hostname}'`;
+    if (!utils.IsNameValid(hostname)) return `Invalid container name '${hostname}'`;
     let host = new Host(hostname)
-    host = def.SetDefaultHost(host)
+    host = utils.SetDefaultHost(host)
     host = await interactive.DefineHost(vshell, host);
     vlab.GetCurrentLab()?.AddHost(host);
     host.docker = await docker.CreateContainer(host);
-    visuals.DisplayNew(hostname, "host");
+    utils.DisplayNew(hostname, "host");
     vshell.RefreshPrompt()
 }
 
@@ -56,7 +54,7 @@ export function DeleteHost(hostname: string) {
     const host = vlab.GetCurrentLab()?.FindHostByName(hostname);
     if (host) {
         vlab.GetCurrentLab()?.DeleteHost(host);
-        visuals.DisplayDeleted(hostname, "host");
+        utils.DisplayDeleted(hostname, "host");
     }
 }
 
@@ -74,15 +72,24 @@ export async function ConnectHost(hostname: string, netname: string) {
 // START host using host name
 // start <hostname>
 export function StartHost(hostname: string) {
-    if (vlab.GetCurrentLab()?.FindHostByName(hostname) == undefined) {
-        console.log(`Host ${hostname} does not exist`);
-        return;
-    }
     const host = vlab.GetCurrentLab()?.FindHostByName(hostname);
+    if (!utils.HostExists(host, hostname)) return;
     if (host?.docker) {
         docker.StartContainer(host.docker);
         host.status = "up";
         console.log(`${hostname} is up!`);
+    }
+}
+
+// STOP host using host name
+// stop <hostname>
+export function StopHost(hostname: string) {
+    const host = vlab.GetCurrentLab()?.FindHostByName(hostname);
+    if (!utils.HostExists(host, hostname)) return;
+    if (host?.docker) {
+        docker.StopContainer(host.docker);
+        host.status = "down";
+        console.log(`${hostname} is down!`)
     }
 }
 
@@ -131,13 +138,13 @@ export function CheckHost(hostname: string) {
 // CREATE new network in current lab
 // create network <netname>
 export async function CreateNetwork(netname: string) {
-    if (!verify.IsNameValid(netname)) return `Invalid network name '${netname}`;
+    if (!utils.IsNameValid(netname)) return `Invalid network name '${netname}`;
     let network = new Network(netname);
-    network = def.SetDefaultNetwork(network);
+    network = utils.SetDefaultNetwork(network);
     network = await interactive.DefineNetwork(vshell, network);
     vlab.GetCurrentLab()?.AddNetwork(network);
     network.docker = await docker.CreateNetwork(network);
-    visuals.DisplayNew(netname, "network");
+    utils.DisplayNew(netname, "network");
     vshell.RefreshPrompt()
 }
 
@@ -147,7 +154,7 @@ export function DeleteNetwork(netname: string) {
     const netw = vlab.GetCurrentLab()?.FindNetworkByName(netname);
     if (netw) {
         vlab.GetCurrentLab()?.DeleteNetwork(netw);
-        visuals.DisplayDeleted(netname, "network");
+        utils.DisplayDeleted(netname, "network");
     }
 }
 
@@ -170,10 +177,10 @@ export function CheckNetwork(netname: string) {
 // CREATE new lab
 // create lab <labname>
 export async function CreateLab(labname: string, scut: string) {
-    if (!verify.IsNameValid(labname))
+    if (!utils.IsNameValid(labname))
         return `Invalid lab name ${labname}`;
     vlab.AddLab(new Lab(labname));
-    visuals.DisplayNew(labname, "lab");
+    utils.DisplayNew(labname, "lab");
     if (SaveExists(vlab.FindLabByName(labname))) vlab.FindLabByName(labname).saved = true;
     if (scut == "&") {
         await docker.ClearContainers();
@@ -189,13 +196,13 @@ export function DeleteLab(labname: string) {
     if (labname == "*") {
         vlab.labs.forEach((lab) => {
             vlab.DeleteLab(lab);
-            visuals.DisplayDeleted(labname, "lab");
+            utils.DisplayDeleted(labname, "lab");
         });
         return;
     }
     else if (vlab.FindLabByName(labname).name == "") return `Lab ${labname} does not exist`;
     vlab.DeleteLab(vlab.FindLabByName(labname));
-    visuals.DisplayDeleted(labname, "lab");
+    utils.DisplayDeleted(labname, "lab");
 }
 
 // CHECK lab using lab name
