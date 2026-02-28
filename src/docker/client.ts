@@ -78,8 +78,8 @@ export async function ClearContainers() {
         const containers = await docker.listContainers({ all: true });
         for (const cont of containers) {
             const container = docker.getContainer(cont.Id);
-            await container.stop().catch(() => { });
-            await container.remove({ force: true });
+            container.stop().catch(() => { });
+            container.remove({ force: true });
         }
     } catch (err) {
         console.log("Error clearing containers:", err);

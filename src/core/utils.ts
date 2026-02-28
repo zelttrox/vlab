@@ -1,9 +1,7 @@
-import { Volume } from "dockerode";
 import { Host } from "../models/host";
 import { Network } from "../models/network";
-import { VLab } from "../models/vlab";
 
-// Set default required values for host creation
+// Set basic values for host as default
 export function SetDefaultHost(host: Host): Host {
     host.image = "ubuntu";
     host.shell = "/bin/bash";
@@ -11,7 +9,8 @@ export function SetDefaultHost(host: Host): Host {
     return host;
 }
 
-// Set default required values for network creation
+// Set basic values for network as default
+// FIX: IPs ARE NOT WORKING
 export function SetDefaultNetwork(network: Network): Network {
     network.driver = "bridge";
     network.ipRange = "10.10.0.0/24";

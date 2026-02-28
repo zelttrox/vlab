@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@supabase/supabase-js": "^2.96.0",
+    "@supabase/supabase-js": "^2.98.0",
     "cors": "^2.8.5",
     "dockerode": "^4.0.9",
     "express": "^5.2.1",

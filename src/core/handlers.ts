@@ -14,8 +14,8 @@ import { SaveExists } from "./save";
 // Beta
 import * as logs from "../beta/logs"
 
-// Init variables
-export var vlab = new VLab()
+// Init global object constants
+export const vlab = new VLab()
 export const vshell = new VShell(vlab)
 
 // Init VLab
