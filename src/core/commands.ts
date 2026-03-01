@@ -35,7 +35,7 @@ export async function HandleCommand(command: string) {
                 save.Unsave(handler.vlab.GetCurrentLab()); return;
             case "create":
                 switch (expr[1]) {
-                    case "host": handler.CreateHost(expr[2]); return;
+                    case "host": handler.CreateHost(expr[2], expr[3]); return;
                     case "network": handler.CreateNetwork(expr[2]); return;
                     default: return `Unknown command '${command}'`;
                 }

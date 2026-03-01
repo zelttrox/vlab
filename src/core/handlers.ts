@@ -37,7 +37,7 @@ export async function InitLabs() {
 
 // CREATE new host in current lab
 // create host <hostname>
-export async function CreateHost(hostname: string) {
+export async function CreateHost(hostname: string, scut: string) {
     if (!utils.IsNameValid(hostname)) return `Invalid container name '${hostname}'`;
     let host = new Host(hostname)
     host = utils.SetDefaultHost(host)
@@ -45,7 +45,10 @@ export async function CreateHost(hostname: string) {
     vlab.GetCurrentLab()?.AddHost(host);
     host.docker = await docker.CreateContainer(host);
     utils.DisplayNew(hostname, "host");
-    vshell.RefreshPrompt()
+    if (scut == "&") {
+        await StartHost(hostname);
+        await ShellHost(hostname);
+    }
 }
 
 // DELETE host using host name
@@ -195,8 +198,6 @@ export async function CreateLab(labname: string, scut: string) {
     utils.DisplayNew(labname, "lab");
     if (SaveExists(vlab.FindLabByName(labname))) vlab.FindLabByName(labname).saved = true;
     if (scut == "&") {
-        await docker.ClearContainers();
-        await docker.ClearNetworks();
         vlab.EnterLab(vlab.FindLabByName(labname));
         vshell?.RefreshPrompt();
     }
