@@ -34,8 +34,11 @@ export class VShell {
     private SetupListeners() {
         this.rl?.on("line", async (line) => {
             const input = line.trim();
-            let err = await HandleCommand(input);
-            if (err) console.log("\x1b[1;90m" + "Error: " + err + "\x1b[0m");
+            if (input.includes("&&")) {
+                let inputs = input.split("&&");
+                inputs.forEach(async (cmd) => { await HandleCommand(cmd.trim()); })
+            }
+            else await HandleCommand(input.trim());
             this.rl?.prompt();
         });
         this.rl?.on("close", () => {

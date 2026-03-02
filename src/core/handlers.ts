@@ -45,10 +45,11 @@ export async function CreateHost(hostname: string, scut: string) {
     vlab.GetCurrentLab()?.AddHost(host);
     host.docker = await docker.CreateContainer(host);
     utils.DisplayNew(hostname, "host");
-    if (scut == "&") {
+    if (scut == "~") {
         await StartHost(hostname);
         await ShellHost(hostname);
     }
+    return;
 }
 
 // DELETE host using host name
@@ -197,7 +198,7 @@ export async function CreateLab(labname: string, scut: string) {
     vlab.AddLab(new Lab(labname));
     utils.DisplayNew(labname, "lab");
     if (SaveExists(vlab.FindLabByName(labname))) vlab.FindLabByName(labname).saved = true;
-    if (scut == "&") {
+    if (scut == "~") {
         vlab.EnterLab(vlab.FindLabByName(labname));
         vshell?.RefreshPrompt();
     }
