@@ -2,6 +2,7 @@
 import ReportBug from "../beta/bug";
 import * as logs from "../beta/logs";
 import * as handler from "../core/handlers";
+import * as utils from "../core/utils";
 import * as save from "./save";
 
 // Determinate command based on vshell user input
@@ -20,7 +21,18 @@ export async function HandleCommand(command: string) {
         else process.exit();
         return;
     }
-    else logs.LogCommand(command)
+    // AUTOSAVE
+    if (expr[0] == "autosave") {
+        switch (expr[1]) {
+            case "enable":
+                handler.vlab.autosave = true; break;
+            case "disable":
+                handler.vlab.autosave = false; break;
+            default: handler.vlab.autosave = !handler.vlab.autosave; break;
+        }
+        utils.DisplayAutosave(handler.vlab.autosave);
+    }
+    logs.LogCommand(command);
     if (handler.vlab.GetCurrentLab() && handler.vshell.shellMode == false) {
         // GO BACK to root
         if (expr[0] == "/" || (expr[0] == "go" && expr[1] == "back")) {

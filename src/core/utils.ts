@@ -44,3 +44,10 @@ export function DisplayNew(name: string, type: string) {
 export function DisplayDeleted(name: string, type: string) {
     console.log(`- ${type}: ${name}`)
 }
+
+// Display autosave state
+export function DisplayAutosave(state: boolean) {
+    let status: string;
+    state ? status = "enabled" : status = "disabled";
+    console.log(`autosave is now ${status}`)
+}

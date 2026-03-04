@@ -3,10 +3,12 @@ import { Lab } from "./lab";
 export class VLab {
     public labs: Lab[];
     private currentLab: Lab | null = null;
+    public autosave: boolean;
 
     constructor() {
         this.labs = [];
         this.currentLab = null;
+        this.autosave = false;
     }
 
     public AddLab(lab: Lab) {
