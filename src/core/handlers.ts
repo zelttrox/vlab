@@ -9,7 +9,7 @@ import * as docker from "../docker/client";
 import * as utils from "./utils";
 // CLI
 import * as interactive from "./interactive";
-import { SaveExists } from "./save";
+import * as save from "./save";
 
 // Beta
 import * as logs from "../beta/logs"
@@ -24,11 +24,15 @@ export async function InitVLab() {
     await docker.ClearContainers();
     await docker.ClearNetworks();
     vshell.Start();
+    InitLabs();
 }
 
 // Init saved labs
 export async function InitLabs() {
-    
+    const files = save.CheckSaves();
+    files.forEach(file => {
+        save.Load(file);
+    })
 }
 
 // ###############
@@ -197,7 +201,7 @@ export async function CreateLab(labname: string, scut: string) {
         return `Invalid lab name ${labname}`;
     vlab.AddLab(new Lab(labname));
     utils.DisplayNew(labname, "lab");
-    if (SaveExists(vlab.FindLabByName(labname))) vlab.FindLabByName(labname).saved = true;
+    if (save.SaveExists(vlab.FindLabByName(labname))) vlab.FindLabByName(labname).saved = true;
     if (scut == "~") {
         vlab.EnterLab(vlab.FindLabByName(labname));
         vshell?.RefreshPrompt();

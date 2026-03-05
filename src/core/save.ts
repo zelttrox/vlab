@@ -24,7 +24,7 @@ export function SaveExists(lab: Lab | null): boolean {
 }
 
 // Load a saved lab by importing JSON data
-export async function Load(labname: string) {
+export function Load(labname: string) {
     try {
         const raw = fs.readFileSync(`./data/${labname}.json`, "utf-8");
         const data = JSON.parse(raw);
@@ -32,6 +32,13 @@ export async function Load(labname: string) {
         newLab.hosts = data.hosts;
         newLab.networks = data.networks;
         vlab.AddLab(newLab);
-        console.log("added lab", newLab);
+        newLab.saved = true;
     } catch (err) { console.error(err) };
+}
+
+// Check saved labs from /data
+export function CheckSaves(): string[] {
+    const saves = fs.readdirSync("./data")
+    saves.splice(saves.findIndex((e) => (e == 'history.txt')), 1);
+    return saves.map(save => save.slice(0, -5));
 }
