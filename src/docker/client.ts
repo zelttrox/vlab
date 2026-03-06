@@ -4,15 +4,15 @@ import {spawn} from "child_process"
 import { Host } from "../models/host";
 import { Network } from "../models/network";
 
+import * as fs from "fs";
+
 const docker = new Docker();
 
 // Create and return docker container
 export async function CreateContainer(host: Host) {
-    // docker pull <image>
     docker.pull(host.image, (err: Error) => {
         if (err) console.log("Error pulling image:", err);
     });
-    // docker run <param>
     try {
         const container = await docker.createContainer({
             Image: host.image,
@@ -39,6 +39,20 @@ export async function StopContainer(container: Docker.Container) {
 // Restart docker container
 export async function RestartContainer(container: Docker.Container) {
     await container.restart();
+}
+
+// Save docker container snapshot image
+export async function SaveContainer(host: Host) {
+    await host.docker?.commit(`${host.name}`);
+    const image = docker.getImage(host.name);
+    const stream = await image.get();
+    const file = fs.createWriteStream(`${host.name}.tar`)
+    await new Promise((resolve, reject) => {
+        stream.pipe(file);
+        stream.on("end", resolve);
+        stream.on("error", reject);
+      });
+    console.log("saved container!")
 }
 
 // Exec docker container
