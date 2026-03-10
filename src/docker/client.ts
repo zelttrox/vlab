@@ -3,6 +3,7 @@ import {spawn} from "child_process"
 
 import { Host } from "../models/host";
 import { Network } from "../models/network";
+import { Lab } from "../models/lab";
 
 import * as fs from "fs";
 
@@ -13,9 +14,11 @@ export async function CreateContainer(host: Host) {
     docker.pull(host.image, (err: Error) => {
         if (err) console.log("Error pulling image:", err);
     });
+    const image = docker.getImage(host.image);
+    await image.tag({ repo: host.name, tag: "latest" });
     try {
         const container = await docker.createContainer({
-            Image: host.image,
+            Image: `${host.name}:latest`,
             Cmd: ["tail", "-f", "/dev/null"],
             name: host.name,
             OpenStdin: true,
@@ -42,17 +45,17 @@ export async function RestartContainer(container: Docker.Container) {
 }
 
 // Save docker container snapshot image
-export async function SaveContainer(host: Host) {
-    await host.docker?.commit(`${host.name}`);
+export async function SaveContainer(host: Host, currentLab: Lab | null) {
+    await host.docker?.commit({ repo: host.name, tag: "latest" });
     const image = docker.getImage(host.name);
     const stream = await image.get();
-    const file = fs.createWriteStream(`${host.name}.tar`)
+    if (!currentLab) return;
+    const file = fs.createWriteStream(`data/${currentLab.name}/${host.name}.tar`)
     await new Promise((resolve, reject) => {
         stream.pipe(file);
         stream.on("end", resolve);
         stream.on("error", reject);
       });
-    console.log("saved container!")
 }
 
 // Exec docker container

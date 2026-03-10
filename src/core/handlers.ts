@@ -99,7 +99,6 @@ export async function StopHost(hostname: string) {
         host.status = "down";
         console.log(`${hostname} is down!`)
     }
-    if (host) await docker.SaveContainer(host)
 }
 
 // RESTART host using host name
