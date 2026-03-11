@@ -1,7 +1,10 @@
 import * as fs from "fs";
 import * as docker from "../docker/client"
+
 import { Lab } from "../models/lab";
 import { vlab } from "./handlers";
+import { Host } from "../models/host";
+import { Network } from "../models/network";
 
 // Save a lab and export as JSON in /data
 export function Save(lab: Lab | null) {
@@ -36,16 +39,26 @@ export function Load(labname: string) {
         const raw = fs.readFileSync(`./data/${labname}/config.json`, "utf-8");
         const data = JSON.parse(raw);
         let newLab = new Lab(labname);
-        newLab.hosts = data.hosts;
-        newLab.networks = data.networks;
-        vlab.AddLab(newLab);
-        newLab.saved = true;
-        newLab.hosts.forEach(host => {
-            docker.LoadContainer(host, newLab);
+        // Import hosts
+        const hostsData: Host[] = data.hosts;
+        hostsData.forEach(hostData => {
+            newLab.hosts.push(new Host(hostData.name, hostData.image, hostData.shell));
         })
+        // Import networks
+        const networksData: Network[] = data.networks;
+        networksData.forEach(networkData => {
+            newLab.networks.push(new Network(networkData.name));
+        })
+        // Load hosts
+        newLab.hosts.forEach(async (host) => {
+            host.docker = await docker.LoadContainer(host, newLab);
+        })
+        // Load networks
         newLab.networks.forEach(netw => {
             docker.CreateNetwork(netw);
         })
+        newLab.saved = true;
+        vlab.AddLab(newLab);
     } catch (err) { console.error(err) };
 }
 

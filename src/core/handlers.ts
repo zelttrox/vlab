@@ -24,7 +24,7 @@ export async function InitVLab() {
     await docker.ClearContainers();
     await docker.ClearNetworks();
     vshell.Start();
-    InitLabs();
+    await InitLabs();
 }
 
 // Init saved labs
