@@ -1,5 +1,5 @@
 import Docker from "dockerode";
-import {spawn} from "child_process"
+import { spawn } from "child_process";
 
 import { Host } from "../models/host";
 import { Network } from "../models/network";
@@ -50,23 +50,47 @@ export async function SaveContainer(host: Host, currentLab: Lab | null) {
     const image = docker.getImage(host.name);
     const stream = await image.get();
     if (!currentLab) return;
-    const file = fs.createWriteStream(`data/${currentLab.name}/${host.name}.tar`)
+    const file = fs.createWriteStream(
+        `data/${currentLab.name}/${host.name}.tar`,
+    );
     await new Promise((resolve, reject) => {
         stream.pipe(file);
         stream.on("end", resolve);
         stream.on("error", reject);
-      });
+    });
+}
+
+// Load docker container snapshot
+export async function LoadContainer(host: Host, currentLab: Lab | null) {
+    if (!currentLab) return;
+    const image = fs.createReadStream(`./data/${currentLab.name}/${host.name}.tar`);
+    await docker.loadImage(image)
+    try {
+        const container = await docker.createContainer({
+            Image: `${host.name}:latest`,
+            Cmd: ["tail", "-f", "/dev/null"],
+            name: host.name,
+            OpenStdin: true,
+        });
+        return container;
+    } catch (err) {
+        console.log("Error loading container:", err);
+    }
 }
 
 // Exec docker container
 export async function ExecContainer(host: Host): Promise<void> {
     if (!host.docker) return;
-    
-    const childProcess = spawn("docker", ["exec", "-it", host.name, host.shell], {
-        stdio: "inherit",
-        shell: false
-    });
-    
+
+    const childProcess = spawn(
+        "docker",
+        ["exec", "-it", host.name, host.shell],
+        {
+            stdio: "inherit",
+            shell: false,
+        },
+    );
+
     return new Promise<void>((resolve) => {
         childProcess.on("exit", async () => {
             resolve();
@@ -85,8 +109,8 @@ export async function ExecCommand(host: Host, cmd: string[]) {
         Cmd: cmd,
         AttachStderr: false,
         AttachStdout: false,
-    })
-    exec.start({Detach: true});
+    });
+    exec.start({ Detach: true });
 }
 
 // Remove all containers
@@ -95,7 +119,7 @@ export async function ClearContainers() {
         const containers = await docker.listContainers({ all: true });
         for (const cont of containers) {
             const container = docker.getContainer(cont.Id);
-            container.stop().catch(() => { });
+            container.stop().catch(() => {});
             container.remove({ force: true });
         }
     } catch (err) {

@@ -40,6 +40,12 @@ export function Load(labname: string) {
         newLab.networks = data.networks;
         vlab.AddLab(newLab);
         newLab.saved = true;
+        newLab.hosts.forEach(host => {
+            docker.LoadContainer(host, newLab);
+        })
+        newLab.networks.forEach(netw => {
+            docker.CreateNetwork(netw);
+        })
     } catch (err) { console.error(err) };
 }
 
@@ -47,5 +53,5 @@ export function Load(labname: string) {
 export function CheckSaves(): string[] {
     const saves = fs.readdirSync("./data")
     saves.splice(saves.findIndex((e) => (e == 'history.txt')), 1);
-    return saves.map(save => save.slice(0, -5));
+    return saves;
 }

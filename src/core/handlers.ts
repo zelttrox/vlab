@@ -29,9 +29,9 @@ export async function InitVLab() {
 
 // Init saved labs
 export async function InitLabs() {
-    const files = save.CheckSaves();
-    files.forEach(file => {
-        save.Load(file);
+    const folders = save.CheckSaves();
+    folders.forEach(folder => {
+        save.Load(folder);
     })
 }
 
