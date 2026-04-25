@@ -167,7 +167,6 @@ export function CreateNetwork(network: Network) {
 
 // Attach network to host
 export async function ConnectHost(host: Host, network: Network) {
-    //console.log("connecting", host.name, "to", network.name);
     await network.docker?.connect({
         Container: host.name,
         EndpointConfig: {
@@ -175,5 +174,12 @@ export async function ConnectHost(host: Host, network: Network) {
                 IPv4Address: host.ipv4,
             },
         },
+    });
+}
+
+// Dettach network to host
+export async function DisconnectHost(host: Host, network: Network) {
+    await network.docker?.disconnect({
+        Container: host.name,
     });
 }

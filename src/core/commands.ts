@@ -73,6 +73,9 @@ export async function HandleCommand(command: string) {
             case "connect":
                 await handler.ConnectHost(expr[1], expr[2]);
                 break;
+            case "disconnect":
+                await handler.DisconnectHost(expr[1], expr[2]);
+                break;
             case "start":
                 return handler.StartHost(expr[1]);
             case "stop":

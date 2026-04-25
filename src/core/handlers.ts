@@ -75,6 +75,19 @@ export async function ConnectHost(hostname: string, netname: string) {
         await docker.ConnectHost(host, network);
         host?.networks.push(network);
     }
+    console.log(`Host ${host?.name} connected to ${network?.name}`)
+}
+
+// DISCONNECT host from network in same lab
+// disconnect <hostname> <netname>
+export async function DisconnectHost(hostname: string, netname: string) {
+    const host = vlab.GetCurrentLab()?.FindHostByName(hostname);
+    const network = vlab.GetCurrentLab()?.FindNetworkByName(netname);
+    if (network && host) {
+        await docker.ConnectHost(host, network);
+        host?.networks.push(network);
+    }
+    console.log(`Host ${host?.name} disconnected from ${network?.name}`)
 }
 
 // START host using host name
