@@ -11,10 +11,10 @@ const docker = new Docker();
 
 // Create and return docker container
 export async function CreateContainer(host: Host) {
-    docker.pull(host.image, (err: Error) => {
-        if (err) console.log("Error pulling image:", err);
-    });
-    const image = docker.getImage(host.image);
+    console.log("Pulling image:", host.image)
+    await docker.pull(host.image);
+    const image = docker.getImage(`${host.image}`);
+    image.inspect();
     await image.tag({ repo: host.name, tag: "latest" });
     try {
         const container = await docker.createContainer({

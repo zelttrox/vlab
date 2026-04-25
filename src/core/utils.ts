@@ -3,7 +3,7 @@ import { Network } from "../models/network";
 
 // Set basic values for host as default
 export function SetDefaultHost(host: Host): Host {
-    host.image = "ubuntu";
+    host.image = "ubuntu:latest";
     host.shell = "/bin/bash";
     host.ipv4 = "10.10.0.1";
     return host;
